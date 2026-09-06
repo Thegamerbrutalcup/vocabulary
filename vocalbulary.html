@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verbatim — Daily Vocabulary Atelier</title>
+<meta name="description" content="Ten curated words every day — five of them gloriously hard — plus a weekly test. A single-file vocabulary atelier." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ink:#0d0b08; --ink2:#14110c; --ink3:#1e1a13;
+  --paper:#f2ede3; --paper2:#c9c1b1; --mute:#8b8172;
+  --blaze:#ff5c1f; --vio:#9d8cff; --correct:#7ee396; --wrong:#ff6e6e;
+  --line:rgba(242,237,227,.14); --line2:rgba(242,237,227,.08);
+  --fd:'Fraunces',Georgia,'Times New Roman',serif;
+  --fs:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--paper);font-family:var(--fs);-webkit-font-smoothing:antialiased;overflow-x:clip;line-height:1.4}
+::selection{background:var(--blaze);color:var(--ink)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--ink3);border-radius:8px;border:2px solid var(--ink)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+ul{list-style:none}
+img,svg{display:block}
+
+/* grain */
+body::after{content:"";position:fixed;inset:-50%;z-index:80;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+.wrap{max-width:1064px;margin:0 auto;padding-left:20px;padding-right:20px}
+.mono{font-family:var(--fm);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.blaze{color:var(--blaze)} .vio{color:var(--vio)} .mute{color:var(--mute)}
+
+/* ---------- header ---------- */
+header{position:fixed;inset:0 0 auto;z-index:50;border-bottom:1px solid var(--line2);background:rgba(13,11,8,.78);backdrop-filter:blur(12px)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{font-family:var(--fd);font-weight:900;font-size:20px;letter-spacing:-.02em}
+.logo b{color:var(--blaze);font-weight:900}
+.tabs{display:flex;gap:4px}
+.tab{position:relative;padding:7px 14px;border-radius:999px;font-family:var(--fm);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper2);transition:color .25s}
+.tab:hover{color:var(--paper)}
+.tab.on{background:var(--blaze);color:var(--ink)}
+.hdate{font-family:var(--fm);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+@media(max-width:760px){.hdate{display:none}}
+
+/* ---------- hero ---------- */
+.hero{border-bottom:1px solid var(--line2);position:relative;overflow:hidden}
+.glow{position:absolute;top:-160px;right:-10%;width:660px;height:660px;border-radius:50%;opacity:.22;filter:blur(60px);pointer-events:none;
+  background:radial-gradient(closest-side,#ff5c1f 0%,transparent 70%)}
+.hero-grid{display:grid;gap:44px;padding-top:130px;padding-bottom:56px}
+@media(min-width:1024px){.hero-grid{grid-template-columns:1.15fr 1fr;align-items:end;padding-top:160px;padding-bottom:80px}}
+.eyebrow{display:flex;align-items:center;gap:12px;color:var(--blaze)}
+.eyebrow::before{content:"";width:8px;height:8px;background:var(--blaze);transform:rotate(45deg)}
+h1{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(46px,7vw,78px);line-height:.98;margin-top:24px}
+h1 em{font-weight:300}
+h1 .b{color:var(--blaze);font-style:italic;font-weight:300}
+.lede{margin-top:24px;max-width:460px;color:var(--paper2);font-size:17px;line-height:1.65}
+.stats{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px 32px;color:var(--mute)}
+
+/* search */
+.search{margin-top:32px}
+.search-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:12px;transition:border-color .25s}
+.search-row:focus-within{border-color:var(--blaze)}
+.search-row svg{flex:none;color:var(--mute)}
+.search-row:focus-within svg{color:var(--blaze)}
+.search-row input{flex:1;min-width:0;background:none;border:none;outline:none;color:var(--paper);font-family:var(--fd);font-size:clamp(19px,2.4vw,24px)}
+.search-row input::placeholder{color:rgba(139,129,114,.6)}
+.spin{animation:sp 1s linear infinite;color:var(--blaze)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.search-result{margin-top:12px;border:1px solid var(--line2);border-radius:18px;background:var(--ink2);padding:20px 22px;animation:up .35s cubic-bezier(.22,1,.36,1)}
+.search-err{margin-top:16px;font-family:var(--fd);font-style:italic;font-size:18px;color:var(--paper2);animation:up .35s}
+.similar{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:1px solid var(--line2);border-radius:999px;padding:5px 12px;font-family:var(--fm);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--paper2);transition:all .2s}
+button.chip:hover{border-color:var(--blaze);color:var(--blaze)}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* spotlight */
+.spot{position:relative;border:1px solid var(--line);border-radius:24px;background:rgba(20,17,12,.85);padding:28px}
+.spot::before,.spot::after{content:"";position:absolute;width:14px;height:14px}
+.spot::before{top:-1px;left:-1px;border-top:2px solid var(--blaze);border-left:2px solid var(--blaze)}
+.spot::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--blaze);border-right:2px solid var(--blaze)}
+.spot-top{display:flex;justify-content:space-between;color:var(--mute)}
+.spot-word{margin-top:24px;min-height:150px;transition:opacity .4s,filter .4s,transform .4s}
+.spot-word.fading{opacity:0;filter:blur(6px);transform:translateY(10px)}
+.spot-word h2{font-family:var(--fd);font-weight:600;font-size:clamp(42px,5vw,58px);letter-spacing:-.02em;display:inline}
+.spot-word h2.hard{color:var(--vio)}
+.spot-pos{font-family:var(--fd);font-style:italic;color:var(--paper2);margin-top:4px;font-size:15px}
+.spot-def{margin-top:14px;color:var(--paper2);line-height:1.6;font-size:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.spot-bottom{margin-top:22px;display:flex;align-items:center;justify-content:space-between}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:4px;border-radius:99px;background:var(--line);transition:all .3s;padding:0}
+.dot.on{width:24px;background:var(--blaze)}
+
+/* marquee */
+.marquee{overflow:hidden;border-bottom:1px solid var(--line2);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee-track{display:flex;width:max-content;gap:32px;padding:16px 0;animation:mq 38s linear infinite}
+.marquee-track span{display:flex;align-items:center;gap:32px;white-space:nowrap;font-family:var(--fd);font-style:italic;font-size:clamp(20px,2.6vw,28px);color:var(--paper2)}
+.marquee-track i{width:6px;height:6px;background:var(--blaze);transform:rotate(45deg);flex:none}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* sections */
+section.daily{padding-top:64px;padding-bottom:64px}
+@media(min-width:768px){section.daily{padding-top:96px;padding-bottom:96px}}
+.daymeta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;color:var(--mute);margin-bottom:44px}
+.shead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:8px}
+.shead h2{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(36px,5.4vw,58px);margin-top:10px}
+.shead p{max-width:320px;color:var(--mute);font-size:14px;line-height:1.6;padding-bottom:4px}
+.gauntlet{margin-top:80px;border:1px solid rgba(157,140,255,.25);border-radius:24px;background:linear-gradient(180deg,rgba(157,140,255,.07),transparent);padding:8px 20px 20px}
+@media(min-width:768px){.gauntlet{padding:8px 32px 28px}}
+
+/* word card */
+.card{border-top:1px solid var(--line);padding:26px 0}
+.card:first-child{border-top:none}
+.crow{display:flex;gap:16px;align-items:flex-start}
+@media(min-width:768px){.crow{gap:24px}}
+.idx{font-family:var(--fm);font-size:11px;letter-spacing:.2em;margin-top:8px;color:var(--blaze)}
+.idx.h{color:var(--vio)}
+.cmain{flex:1;min-width:0}
+.chead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.chead h3{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(28px,3.6vw,40px);line-height:1;transition:color .3s}
+.card:hover .chead h3{color:var(--blaze)}
+.phon{font-family:var(--fm);font-size:13px;color:var(--mute)}
+.pos{font-family:var(--fd);font-style:italic;font-size:15px;color:var(--paper2)}
+.def{margin-top:12px;max-width:640px;color:var(--paper2);font-size:16px;line-height:1.65}
+.ex{margin-top:8px;max-width:640px;font-family:var(--fd);font-style:italic;color:var(--mute);font-size:15px}
+.syns{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.syns li{border:1px solid var(--line2);border-radius:999px;padding:4px 12px;font-family:var(--fm);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper2)}
+.cside{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.tag{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:var(--fm);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.tag.h{border-color:rgba(157,140,255,.5);color:var(--vio)}
+.abtn{width:32px;height:32px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--paper2);transition:all .2s}
+.abtn:hover{border-color:var(--blaze);color:var(--blaze)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1;transform:none}
+
+/* flashcards */
+.drill-wrap{max-width:760px;margin:0 auto}
+.drill-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.pill-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-family:var(--fm);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper2);transition:all .2s}
+.pill-btn:hover{border-color:var(--blaze);color:var(--blaze)}
+.pill-btn:disabled{opacity:.45;cursor:not-allowed}
+.fdeck{perspective:1200px}
+.fcard{position:relative;width:100%;height:320px;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+@media(min-width:768px){.fcard{height:380px}}
+.fcard.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--line);border-radius:24px;background:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.face.back{transform:rotateY(180deg);border-color:rgba(255,92,31,.5);background:var(--ink3)}
+.face.hard{border-color:rgba(157,140,255,.4);background:linear-gradient(180deg,rgba(157,140,255,.1),var(--ink2))}
+.fword{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(42px,7vw,68px);margin-top:16px}
+.face.hard .fword{color:var(--vio)}
+.fhint{margin-top:28px;font-family:var(--fm);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--blaze)}
+.fdef{margin-top:16px;max-width:560px;font-size:18px;line-height:1.65;color:var(--paper)}
+.fex{margin-top:14px;max-width:520px;font-family:var(--fd);font-style:italic;color:var(--mute);font-size:15px}
+.drill-nav{margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.dbar{flex:1;height:1px;background:var(--line);position:relative;overflow:hidden}
+.dbar i{position:absolute;inset:0 auto 0 0;background:var(--blaze);transition:width .5s}
+
+/* weekly cta */
+.cta{border-top:1px solid var(--line2);background:rgba(20,17,12,.5)}
+.cta-grid{display:grid;gap:44px;padding-top:64px;padding-bottom:64px}
+@media(min-width:820px){.cta-grid{grid-template-columns:1.2fr 1fr;align-items:center;padding-top:96px;padding-bottom:96px}}
+.cta h2{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(36px,5.4vw,58px);line-height:1.03;margin-top:18px}
+.cta h2 em{color:var(--blaze)}
+.cta .lede{margin-top:20px}
+.cta-card{border:1px solid var(--line);border-radius:24px;background:var(--ink);padding:28px}
+.big-btn{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:26px;background:var(--blaze);color:var(--ink);border-radius:999px;padding:16px 26px;font-family:var(--fm);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;transition:background .25s}
+.big-btn:hover{background:var(--paper)}
+.big-btn svg{transition:transform .3s}
+.big-btn:hover svg{transform:translate(2px,-2px)}
+.best{display:flex;align-items:center;gap:16px;border-top:1px solid var(--line2);padding-top:22px;margin-top:22px}
+
+/* archive controls */
+.arch-head{padding-top:110px;margin-bottom:40px}
+@media(min-width:768px){.arch-head{padding-top:140px}}
+.arch-head h1,.quiz-head h1{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(44px,7vw,76px);margin-top:14px}
+.arch-head p{max-width:420px;margin-top:14px;color:var(--mute);line-height:1.65}
+.arch-ctl{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.daychips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:56px}
+.daychips .on{background:var(--blaze);border-color:var(--blaze);color:var(--ink)}
+.fadein{animation:up .45s cubic-bezier(.22,1,.36,1)}
+
+/* quiz */
+.quiz-head{padding-top:110px;margin-bottom:36px}
+@media(min-width:768px){.quiz-head{padding-top:140px}}
+.qwrap{max-width:760px;margin:0 auto}
+.panel{border:1px solid var(--line);border-radius:24px;background:var(--ink2);padding:32px}
+@media(min-width:768px){.panel{padding:44px}}
+.panel h2{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(30px,4.6vw,44px);margin-top:16px}
+.rules{margin-top:30px;display:grid;gap:12px}
+.rules li{display:flex;gap:12px;color:var(--paper2);line-height:1.6;align-items:flex-start}
+.rules li::before{content:"";width:6px;height:6px;background:var(--blaze);transform:rotate(45deg);flex:none;margin-top:9px}
+.qbar-row{display:flex;justify-content:space-between;color:var(--mute);margin-bottom:12px}
+.qbar{height:1px;background:var(--line);position:relative}
+.qbar i{position:absolute;inset:0 auto 0 0;background:var(--blaze);transition:width .5s}
+.qprompt{font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(26px,4vw,38px);line-height:1.3;margin-top:26px;text-wrap:balance}
+.opts{margin-top:28px;display:grid;gap:12px}
+.opt{display:flex;align-items:flex-start;gap:16px;border:1px solid var(--line);border-radius:16px;background:var(--ink2);padding:16px 20px;text-align:left;transition:all .25s;line-height:1.55;color:var(--paper2)}
+.opt:not(:disabled):hover{border-color:var(--blaze);color:var(--paper)}
+.opt .lt{flex:none;width:24px;height:24px;margin-top:2px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:10px}
+.opt.right{border-color:var(--correct);background:rgba(126,227,150,.1);color:var(--correct)}
+.opt.right .lt{border-color:var(--correct)}
+.opt.bad{border-color:var(--wrong);background:rgba(255,110,110,.1);color:var(--wrong)}
+.opt.bad .lt{border-color:var(--wrong)}
+.opt.dim{opacity:.45}
+.opt .mk{margin-left:auto;flex:none;margin-top:3px}
+.qtip{margin-top:20px;text-align:center;color:var(--mute)}
+.result{text-align:center;padding:40px 28px}
+.ring{position:relative;width:176px;height:176px;margin:26px auto 0}
+.ring svg{transform:rotate(-90deg)}
+.ring circle{transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)}
+.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:600;font-size:52px;letter-spacing:-.02em}
+.ring-num small{font-size:24px;color:var(--mute)}
+.verdict{max-width:420px;margin:24px auto 0;font-family:var(--fd);font-style:italic;font-size:24px;text-wrap:balance}
+.result-btns{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.ghost-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:13px 26px;font-family:var(--fm);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper2);transition:all .2s}
+.ghost-btn:hover{border-color:var(--blaze);color:var(--blaze)}
+.misses{margin-top:40px;text-align:left}
+.miss{border:1px solid rgba(255,110,110,.25);background:rgba(255,110,110,.05);border-radius:16px;padding:20px 22px;margin-top:12px}
+.miss h4{font-family:var(--fd);font-weight:600;font-size:24px;display:inline}
+.miss .mk{font-family:var(--fd);font-style:italic;color:var(--mute);font-size:14px;margin-left:12px}
+.miss p{margin-top:8px;color:var(--paper2);line-height:1.6}
+.miss .cmp{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 24px;font-family:var(--fm);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.history{margin:56px auto 0;max-width:760px}
+.hrow{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--line2);border-bottom:none}
+.hrow:first-child{border-radius:14px 14px 0 0}
+.hrow:last-child{border-bottom:1px solid var(--line2);border-radius:0 0 14px 14px}
+.hrow .wk{font-family:var(--fd);font-weight:600;font-size:18px}
+.hrow .rg{font-family:var(--fm);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-top:2px}
+.hrow .sc{font-family:var(--fm);font-size:13px;text-align:right}
+.hrow .at{font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-align:right;margin-top:2px}
+
+/* footer */
+footer{border-top:1px solid var(--line2);margin-top:80px}
+.footmark{font-family:var(--fd);font-weight:900;letter-spacing:-.03em;line-height:1;font-size:clamp(64px,15vw,160px);color:transparent;-webkit-text-stroke:1px var(--paper);opacity:.28;user-select:none;padding-top:40px}
+.footrow{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;border-top:1px solid var(--line2);margin-top:32px;padding-top:24px;padding-bottom:56px;color:var(--mute)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--paper);color:var(--ink);border-radius:999px;padding:12px 22px;font-family:var(--fm);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:0;transition:all .4s cubic-bezier(.22,1,.36,1);z-index:90}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#" onclick="return false">Verbatim<b>.</b></a>
+    <nav class="tabs">
+      <button class="tab on" data-view="today">Today</button>
+      <button class="tab" data-view="archive">Archive</button>
+      <button class="tab" data-view="quiz">Weekly Test</button>
+    </nav>
+    <p class="hdate" id="hero-date"></p>
+  </div>
+</header>
+
+<main>
+  <!-- ============================ TODAY ============================ -->
+  <div class="view" id="view-today">
+    <section class="hero">
+      <div class="glow"></div>
+      <div class="wrap hero-grid">
+        <div class="rv">
+          <p class="eyebrow mono">A daily vocabulary atelier</p>
+          <h1>Ten words a day.<br /><em>Five of them</em> <span class="b">gloriously</span><br />hard.</h1>
+          <p class="lede">Every morning serves a fresh set — meanings, examples, synonyms. Five approachable, five genuinely brutal. At the end of the week, the test decides what actually stuck.</p>
+          <div class="search">
+            <div class="search-row">
+              <span id="search-icon"></span>
+              <input id="search-input" type="text" placeholder="Search any word for its meaning…" spellcheck="false" autocomplete="off" />
+            </div>
+            <div id="search-out"></div>
+            <div class="similar" id="search-sim"></div>
+          </div>
+          <div class="stats mono">
+            <span id="stat-total"></span>
+            <span id="stat-hard"></span>
+            <span>1 test / week</span>
+          </div>
+        </div>
+        <div class="rv">
+          <div class="spot">
+            <div class="spot-top mono"><span>Word of the moment</span><span id="spot-count"></span></div>
+            <div class="spot-word" id="spot-word"></div>
+            <div class="spot-bottom">
+              <div class="dots" id="spot-dots"></div>
+              <span class="mono vio" id="spot-hard"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee"><div class="marquee-track" id="marquee-track"></div></div>
+
+    <section class="daily wrap" id="today-sections"></section>
+
+    <section class="daily wrap" style="border-top:1px solid var(--line2)">
+      <div class="drill-wrap">
+        <div style="text-align:center;margin-bottom:40px" class="rv">
+          <p class="mono blaze">03 — Commit to memory</p>
+          <h2 style="font-family:var(--fd);font-weight:600;letter-spacing:-.02em;font-size:clamp(34px,5.4vw,58px);margin-top:12px">Drill the deck</h2>
+          <p style="max-width:420px;margin:14px auto 0;color:var(--mute);line-height:1.65">Say the meaning out loud before you flip. If you hesitated, the card goes back in your head, not in your pocket.</p>
+        </div>
+        <div class="drill-top">
+          <p class="mono mute" id="drill-meta"></p>
+          <button class="pill-btn" id="drill-shuffle"></button>
+        </div>
+        <div class="fdeck" id="drill-card"></div>
+        <div class="drill-nav">
+          <button class="pill-btn" id="drill-prev"></button>
+          <div class="dbar"><i id="drill-bar"></i></div>
+          <button class="pill-btn" id="drill-next"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="wrap cta-grid">
+        <div class="rv">
+          <p class="mono blaze">The weekly reckoning · <span id="cta-week"></span></p>
+          <h2>On Sunday, the words <em>test you back</em>.</h2>
+          <p class="lede">Ten questions drawn from this week's sets — definitions, reverse lookups, and synonym duels. Take it any time; your best score is kept for the week.</p>
+          <p class="mono mute" style="margin-top:12px" id="cta-range"></p>
+        </div>
+        <div class="cta-card rv">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <p class="mono mute">Words in play this week</p>
+            <p style="font-family:var(--fd);font-weight:600;font-size:46px" id="cta-words"></p>
+          </div>
+          <div class="best" id="cta-best"></div>
+          <button class="big-btn" id="cta-btn"></button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================ ARCHIVE ============================ -->
+  <div class="view hidden" id="view-archive">
+    <div class="wrap">
+      <div class="arch-head">
+        <p class="mono blaze">Every set, every day</p>
+        <h1>The Archive</h1>
+        <p>Daily sets are generated deterministically — revisit any past day and it will be exactly as it was.</p>
+      </div>
+      <div class="arch-ctl">
+        <button class="pill-btn" id="arch-prev"></button>
+        <button class="pill-btn" id="arch-next"></button>
+      </div>
+      <div class="daychips" id="arch-chips"></div>
+      <div id="arch-list"></div>
+    </div>
+  </div>
+
+  <!-- ============================ QUIZ ============================ -->
+  <div class="view hidden" id="view-quiz">
+    <div class="wrap">
+      <div class="quiz-head">
+        <p class="mono blaze">Weekly test</p>
+        <h1>The Reckoning</h1>
+      </div>
+      <div class="qwrap" id="quiz-root"></div>
+      <div id="quiz-history"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="footmark">VERBATIM</p>
+    <div class="footrow mono">
+      <p>Ten words a day — five of them gloriously hard.</p>
+      <p>Single-file build · works offline · scores saved on this device</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script id="wordbank" type="application/json">[{"w":"abate","p":"verb","d":"(transitive) To lessen (something) in force or intensity; to moderate.","x":"The storm finally abated by dawn.","s":["slack","slake"],"f":"medium"},{"w":"abrupt","p":"adjective","d":"Without notice to prepare the mind for the event; sudden; hasty; unceremonious.","s":["sharp","precipitous","discourteous","steep","sudden","disconnected"],"f":"medium"},{"w":"adamant","p":"adjective","d":"(said of people and their conviction) Firm; unshakeable; unyielding; determined.","x":"She was adamant that the meeting start on time.","s":["inexorable","intransigent","adamantine","inflexible","diamond"],"f":"medium"},{"w":"adroit","p":"adjective","d":"deft, dexterous, or skillful","s":["cunning","artful","clever","ingenious","dexterous","clean"],"f":"medium"},{"w":"affable","p":"adjective","d":"Receiving others kindly and conversing with them in a free and friendly manner; friendly, courteous, sociable.","s":["amiable","cordial","genial","friendly"],"f":"medium"},{"w":"aloof","p":"adjective","d":"Reserved and remote; either physically or emotionally distant; standoffish.","x":"He remained aloof from office politics.","s":["reserved","distant"],"f":"medium"},{"w":"ambivalent","p":"adjective","d":"Simultaneously experiencing or expressing opposing or contradictory feelings, beliefs, motivations, or meanings.","s":["ambiguous","equivocal","uncertain","unsure","incertain"],"f":"medium"},{"w":"amiable","p":"adjective","d":"Friendly; kind; sweet; gracious","s":["affable","cordial","genial","friendly","good-humored","good-natured"],"f":"medium"},{"w":"anguish","p":"noun","d":"Extreme pain, either of body or mind; excruciating distress.","s":["torment","hurt","torture","pain"],"f":"medium"},{"w":"apathy","p":"noun","d":"Lack of emotion or motivation; lack of interest or enthusiasm towards something; disinterest (in something).","s":["indifference","spiritlessness"],"f":"medium"},{"w":"appease","p":"verb","d":"To make quiet; to calm; to reduce to a state of peace; to dispel (anger or hatred).","s":["assuage","placate","conciliate","quell","mollify","gruntle"],"f":"medium"},{"w":"ardent","p":"adjective","d":"Full of ardor; expressing passion, spirit, or enthusiasm.","s":["torrid","fervid","fervent","bright","warm","enthusiastic"],"f":"medium"},{"w":"assuage","p":"verb","d":"(transitive) To lessen the intensity of, to mitigate or relieve (hunger, emotion, pain, etc.).","s":["alleviate","placate","conciliate","palliate","appease","allay"],"f":"medium"},{"w":"austere","p":"adjective","d":"Grim or severe in manner or appearance.","s":["stark","stern","severe","plain","ascetic","abstemious"],"f":"medium"},{"w":"banter","p":"noun","d":"Sharp, good-humoured, playful, typically spontaneous conversation.","x":"Their playful banter lightened the long shift.","s":["chaff","jolly","raillery","kid","backchat","give-and-take"],"f":"medium"},{"w":"barren","p":"adjective","d":"(of places) Of poor fertility, infertile; not producing vegetation; desert, waste.","s":["desolate","bleak","stark","dead","bare","sterile"],"f":"medium"},{"w":"belittle","p":"verb","d":"(transitive) To knowingly say that something is smaller or less important than it actually is, especially as a way of showing contempt or deprecation.","s":["diminish","disparage","denigrate","derogate","minimize"],"f":"medium"},{"w":"bewilder","p":"verb","d":"(transitive) To confuse, disorientate, or puzzle someone, especially with many different choices.","s":["trounce","throw","beat","get","perplex","amaze"],"f":"medium"},{"w":"bleak","p":"adjective","d":"Unhappy; cheerless; miserable; emotionally desolate.","s":["desolate","stark","cold","black","dim","bare"],"f":"medium"},{"w":"boisterous","p":"adjective","d":"Full of energy; exuberant; noisy.","s":["fierce","spirited","rough","disorderly","unruly","robustious"],"f":"medium"},{"w":"brevity","p":"noun","d":"(uncountable) Succinctness; conciseness.","s":["transience","briefness"],"f":"medium"},{"w":"candor","p":"noun","d":"The state of being sincere and open in speech; honesty in expression.","x":"I appreciated her candor about the project's flaws.","s":["frankness","candour","candidness","fairness","forthrightness","fair-mindedness"],"f":"medium"},{"w":"cascade","p":"noun","d":"A waterfall or series of small waterfalls.","s":["cataract","falls","waterfall"],"f":"medium"},{"w":"coerce","p":"verb","d":"(transitive) To use force, threat, fraud, or intimidation in an attempt to compel one to act against their will.","x":"He claimed he was coerced into signing the contract.","s":["pressure","force"],"f":"medium"},{"w":"coherent","p":"adjective","d":"Orderly, logical and consistent.","s":["tenacious","rational","orderly","ordered","consistent","logical"],"f":"medium"},{"w":"commend","p":"verb","d":"(transitive) To praise or acclaim.","s":["remember","recommend"],"f":"medium"},{"w":"complacent","p":"adjective","d":"Uncritically satisfied with oneself or one's achievements; smug.","s":["self-satisfied","contented"],"f":"medium"},{"w":"concede","p":"verb","d":"To admit or agree to be true; to acknowledge","s":["yield","cede","profess","confess","grant"],"f":"medium"},{"w":"concise","p":"adjective","d":"Brief, yet including all important information.","s":["terse","cryptic","succinct","crisp","compact","brief"],"f":"medium"},{"w":"contempt","p":"noun","d":"(uncountable) The state or act of contemning; the feeling or attitude of regarding someone or something as inferior, base, or worthless; scorn, disdain.","s":["disdain","scorn","disrespect"],"f":"medium"},{"w":"cordial","p":"adjective","d":"Hearty; sincere; warm; affectionate.","s":["fervent","affable","amiable","genial","friendly","warm"],"f":"medium"},{"w":"cunning","p":"adjective","d":"Sly; crafty; clever in surreptitious behaviour.","s":["artful","adroit","clever","craft","ingenious","knavish"],"f":"medium"},{"w":"curt","p":"adjective","d":"Brief or terse, especially to the point of being rude.","s":["terse","crisp","concise","short","discourteous","brusk"],"f":"medium"},{"w":"dainty","p":"adjective","d":"Elegant; delicately small and pretty.","s":["delicate","fastidious","exquisite","refined","fine","nice"],"f":"medium"},{"w":"daunt","p":"verb","d":"(transitive) To discourage, intimidate.","s":["dash","pall","scare"],"f":"medium"},{"w":"dearth","p":"noun","d":"(by extension) Scarcity; a lack or short supply.","x":"There is a dearth of affordable housing in the city.","s":["paucity","shortage","famine"],"f":"medium"},{"w":"defiant","p":"adjective","d":"Boldly resisting opposition.","s":["obstreperous","recalcitrant","insubordinate","resistive","resistant"],"f":"medium"},{"w":"deft","p":"adjective","d":"Quick and neat in action; skillful.","x":"With a deft flick of the wrist, she flipped the crepe.","s":["adroit","dexterous","graceful","dextrous"],"f":"medium"},{"w":"demise","p":"noun","d":"(countable) Death; decease.","s":["death","dying"],"f":"medium"},{"w":"demure","p":"adjective","d":"(chiefly of a woman) Modest, quiet, reserved, or serious.","s":["modest","coy","overmodest"],"f":"medium"},{"w":"deride","p":"verb","d":"(transitive) To laugh at or mock (someone or something) harshly; to ridicule, to scorn.","f":"medium"},{"w":"desolate","p":"adjective","d":"Deserted and devoid of inhabitants.","s":["forlorn","bleak","stark","lurch","forsaken","bare"],"f":"medium"},{"w":"deter","p":"verb","d":"(transitive) To prevent something from happening.","s":["dissuade","discourage"],"f":"medium"},{"w":"devout","p":"adjective","d":"Devoted to religion or to religious feelings and duties; pious; extremely religious; godly.","s":["earnest","pious","heartfelt","religious","god-fearing","dear"],"f":"medium"},{"w":"diligent","p":"adjective","d":"Performing with industrious concentration; hard-working and focused.","s":["assiduous","industrious","sedulous","hardworking","tireless","persevering"],"f":"medium"},{"w":"discern","p":"verb","d":"(transitive) To perceive, recognize, or comprehend with the mind; to descry.","s":["recognize","distinguish"],"f":"medium"},{"w":"disdain","p":"noun","d":"(uncountable) A feeling of contempt or scorn.","s":["contempt","scorn","spurn","condescension","reject","despise"],"f":"medium"},{"w":"dismal","p":"adjective","d":"Causing despair; gloomy and bleak.","s":["grim","blue","drab","gloomy","dark","disconsolate"],"f":"medium"},{"w":"docile","p":"adjective","d":"Ready to accept instruction or direction; obedient; subservient.","s":["sheepish","tractable","tamed","teachable","sheeplike","gentle"],"f":"medium"},{"w":"durable","p":"adjective","d":"Able to resist wear or decay; lasting; enduring.","s":["long","lasting","imperishable","perdurable","long-lasting","serviceable"],"f":"medium"},{"w":"earnest","p":"noun","d":"Gravity; serious purpose; earnestness.","s":["solemn","serious","devout","heartfelt","purposeful","businesslike"],"f":"medium"},{"w":"elated","p":"adjective","d":"Extremely happy and excited; delighted; pleased, euphoric.","s":["sublime","joyful","high","jubilant","joyous","exultant"],"f":"medium"},{"w":"eloquent","p":"adjective","d":"Fluently persuasive and articulate.","x":"Her eloquent speech moved the entire hall to silence.","s":["articulate","facile","fluent","silver","silver-tongued","smooth-spoken"],"f":"medium"},{"w":"elude","p":"verb","d":"(transitive) To evade or escape from (someone or something), especially by using cunning or skill.","s":["circumvent","escape","evade","dodge","skirt","hedge"],"f":"medium"},{"w":"embody","p":"verb","d":"(transitive) To represent in a physical or concrete form; to incarnate or personify.","s":["incarnate","personify","be"],"f":"medium"},{"w":"empathy","p":"noun","d":"Identification with or understanding of the thoughts, feelings, or emotional state of another person.","f":"medium"},{"w":"endorse","p":"verb","d":"(transitive) To express support or approval, especially officially or publicly; to give an endorsement.","s":["support","back","certify","second","indorse"],"f":"medium"},{"w":"entice","p":"verb","d":"(transitive) To lure; to attract by arousing desire or hope.","s":["tempt","lure"],"f":"medium"},{"w":"epitome","p":"noun","d":"The embodiment or encapsulation of a class of items.","x":"He is the epitome of a perfect gentleman.","s":["paradigm","image","prototype"],"f":"medium"},{"w":"eradicate","p":"verb","d":"(transitive) To destroy completely; to reduce to nothing radically; to put an end to.","s":["extirpate","eliminate","annihilate","extinguish","decimate","uproot"],"f":"medium"},{"w":"erratic","p":"adjective","d":"Unsteady, random; prone to unexpected changes; not consistent.","s":["temperamental","unsettled","quicksilver","wandering","changeable","unreliable"],"f":"medium"},{"w":"evoke","p":"verb","d":"(transitive) To cause the manifestation of something (emotion, picture, etc.) in someone's mind or imagination.","s":["elicit","educe","provoke","arouse","raise","fire"],"f":"medium"},{"w":"exult","p":"verb","d":"(intransitive) To rejoice; to be very happy, especially in triumph; to triumph (over).","s":["rejoice","jubilate","triumph"],"f":"medium"},{"w":"facade","p":"noun","d":"(architecture) The face of a building, especially the front view or elevation.","x":"Behind her cheerful facade, she was utterly exhausted.","s":["frontage"],"f":"medium"},{"w":"falter","p":"verb","d":"To waver or be unsteady; to weaken or trail off.","s":["stumble","stammer","faltering","hesitation","stutter","bumble"],"f":"medium"},{"w":"feasible","p":"adjective","d":"Able to be done in practice.","s":["viable","possible","practicable","workable","practicably"],"f":"medium"},{"w":"feeble","p":"adjective","d":"Deficient in physical strength.","s":["frail","sapless","decrepit","weak","faint","infirm"],"f":"medium"},{"w":"fervent","p":"adjective","d":"Having or showing emotional warmth, fervor, and/or passion.","s":["torrid","fervid","ardent","cordial","hot","passionate"],"f":"medium"},{"w":"fickle","p":"adjective","d":"Quick to change one’s opinion or allegiance; insincere; not loyal or reliable.","s":["volatile","erratic","quicksilver","changeable","inconstant","changeful"],"f":"medium"},{"w":"flaunt","p":"verb","d":"(transitive) To parade, display with ostentation.","s":["swank","flaunting","flash"],"f":"medium"},{"w":"flimsy","p":"adjective","d":"Likely to bend or break under pressure; easily damaged; frail, unsubstantial.","s":["light","tenuous","inferior","weak","fragile","thin"],"f":"medium"},{"w":"forsake","p":"verb","d":"(transitive) To abandon, to give up, to leave (permanently), to renounce (someone or something).","s":["desolate","lurch","desert","abandon"],"f":"medium"},{"w":"frail","p":"adjective","d":"Easily broken physically; not firm or durable; liable to fail and perish.","s":["delicate","feeble","sapless","decrepit","weak","infirm"],"f":"medium"},{"w":"frugal","p":"adjective","d":"Of something which is consumed (such as money, goods, etc.): Careful or wise in expenditure; avoiding waste.","x":"They lived a frugal life, saving every spare coin.","s":["economical","thrifty","sparing","stinting","scotch"],"f":"medium"},{"w":"furtive","p":"adjective","d":"Of a thing: done with evasive or guilty secrecy.","s":["surreptitious","sneak","skulking","concealed","lurking","stealthy"],"f":"medium"},{"w":"gallant","p":"adjective","d":"Brave, valiant, courteous, especially with regard to male attitudes towards women.","s":["courteous","spirited","impressive","lofty","proud","swell"],"f":"medium"},{"w":"garish","p":"adjective","d":"Overly ostentatious; so colorful as to be in bad taste.","s":["tawdry","brassy","meretricious","gaudy","gimcrack","flashy"],"f":"medium"},{"w":"gaunt","p":"adjective","d":"Unhealthily thin, as from hunger or illness: drawn, emaciated, haggard.","s":["haggard","lean","thin","emaciated","cadaverous","wasted"],"f":"medium"},{"w":"genial","p":"adjective","d":"Friendly and cheerful; enlivening.","s":["affable","amiable","cordial","benign","friendly","kind"],"f":"medium"},{"w":"glib","p":"adjective","d":"Having a ready flow of words but lacking thought or understanding; superficial; shallow.","s":["superficial","plausible","slick","pat","persuasive","smooth-tongued"],"f":"medium"},{"w":"grueling","p":"adjective","d":"Alternative spelling of gruelling. [Very difficult or taxing; exhausting; backbreaking.]","s":["arduous","heavy","hard","effortful","gruelling","laborious"],"f":"medium"},{"w":"grudge","p":"noun","d":"(countable) Deep-seated and/or long-term animosity or ill will about something or someone, especially due to perceived mistreatment.","s":["score","grievance","stew"],"f":"medium"},{"w":"hamper","p":"noun","d":"(US) A wicker or plastic basket specifically for holding laundry (from clothes hamper).","s":["disadvantage","handicap","halter","cramp","shackle","trammels"],"f":"medium"},{"w":"haphazard","p":"adjective","d":"Random; chaotic; incomplete; not thorough, constant, or consistent.","x":"Books lay in haphazard piles across his desk.","s":["careless","sloppy","slapdash","haphazardly","slipshod","hit-or-miss"],"f":"medium"},{"w":"hasty","p":"adjective","d":"Acting or done in haste; hurried or too quick; speedy due to having little time.","s":["headlong","precipitate","hurried","precipitant","overhasty"],"f":"medium"},{"w":"havoc","p":"noun","d":"Widespread devastation and destruction.","x":"The sudden delay wreaked havoc on our schedule.","s":["mayhem"],"f":"medium"},{"w":"heed","p":"verb","d":"(transitive) To mind; to regard with care; to take notice of; to attend to; to observe.","s":["regard","mind","attentiveness","listen"],"f":"medium"},{"w":"hinder","p":"verb","d":"(transitive) To make difficult to accomplish; to act as an obstacle; to frustrate.","s":["impede","obstruct","block","back","stymie","hamper"],"f":"medium"},{"w":"hoax","p":"noun","d":"Anything deliberately intended to deceive or trick.","s":["fraud","dupery","put-on","fraudulence"],"f":"medium"},{"w":"humdrum","p":"adjective","d":"Lacking variety or excitement; dull; boring.","s":["dull","prosaic","monotonous","commonplace","unexciting","unglamorous"],"f":"medium"},{"w":"illicit","p":"adjective","d":"Unlawful.","s":["extracurricular","illegitimate","unlawful","outlaw","adulterous","illegal"],"f":"medium"},{"w":"immerse","p":"verb","d":"(transitive) To involve or engage deeply.","s":["absorb","plunge","engulf","engross","bury","steep"],"f":"medium"},{"w":"impede","p":"verb","d":"(transitive) To get in the way of; to hinder.","s":["obstruct","block","jam","occlude","hinder"],"f":"medium"},{"w":"incite","p":"verb","d":"(transitive) To call into action.","s":["prompt","propel","instigate","prod","move","motivate"],"f":"medium"},{"w":"indifferent","p":"adjective","d":"Ambivalent; unconcerned; uninterested, apathetic.","s":["apathetic","inert","moderate","ordinary","fair","inferior"],"f":"medium"},{"w":"indulge","p":"verb","d":"(intransitive, often followed by \"in\"): To yield to a temptation or desire.","s":["pander","cosset","pamper","gratify","coddle","baby"],"f":"medium"},{"w":"inept","p":"adjective","d":"Not able to do something; not proficient; displaying incompetence.","s":["cumbersome","feckless","incompetent","infelicitous","maladroit","awkward"],"f":"medium"},{"w":"innate","p":"adjective","d":"Inborn; existing or having existed since birth.","s":["congenital","born","inborn","unconditioned","unlearned","noninheritable"],"f":"medium"},{"w":"insolent","p":"adjective","d":"Rude.","s":["audacious","impudent","brazen","brassy","bodacious","barefaced"],"f":"medium"},{"w":"intrigue","p":"verb","d":"(transitive) To arouse the interest of; to fascinate.","s":["scheme","connive","fascinate","machination"],"f":"medium"},{"w":"irate","p":"adjective","d":"Extremely angry; wrathful; enraged.","s":["ireful","angry"],"f":"medium"},{"w":"jovial","p":"adjective","d":"(comparable) Cheerful and good-humoured; jolly, merry.","x":"A jovial host greeted each guest at the door.","s":["mirthful","gay","joyous","jocund","merry","jolly"],"f":"medium"},{"w":"jubilant","p":"adjective","d":"In a state of elation.","s":["elated","joyful","joyous","exultant","prideful","exulting"],"f":"medium"},{"w":"judicious","p":"adjective","d":"Having, characterized by, or done with good judgment or sound thinking.","s":["prudent","sensible","wise","advisable","responsible"],"f":"medium"},{"w":"kindred","p":"noun","d":"(often plural only) Distant and close relatives, collectively; kin.","s":["related","kin","similar","clan","tribe","akin"],"f":"medium"},{"w":"labyrinth","p":"noun","d":"A complicated irregular network of passages or paths, especially underground or covered, in which it is difficult to find one's way.","x":"The old town is a labyrinth of narrow alleys.","s":["maze"],"f":"medium"},{"w":"lament","p":"verb","d":"(intransitive) To express grief; to weep or wail; to mourn.","s":["keen","wail","requiem","bemoan","elegy","dirge"],"f":"medium"},{"w":"lavish","p":"adjective","d":"Expending or bestowing profusely; profuse; prodigal.","s":["lush","rich","prodigal","plush","generous","munificent"],"f":"medium"},{"w":"lenient","p":"adjective","d":"Lax; not strict; tolerant of dissent or deviation.","s":["soft","indulgent","easy","permissive","undemanding","clement"],"f":"medium"},{"w":"lethargic","p":"adjective","d":"Sluggish, slow.","s":["languid","lackadaisical","dazed","listless","languorous","dreamy"],"f":"medium"},{"w":"levity","p":"noun","d":"A lightness of manner or speech, frivolity; flippancy; a lack of appropriate seriousness; an inclination to make a joke of serious matters.","f":"medium"},{"w":"linger","p":"verb","d":"(intransitive) To stay or remain in a place or situation, especially as if unwilling to depart or not easily able to do so.","s":["lounge","tarry","hover","lurk","dally","dawdle"],"f":"medium"},{"w":"lucid","p":"adjective","d":"Clear; easily understood.","x":"Her explanation was lucid, brief, and impossible to misunderstand.","s":["pellucid","clear","rational","limpid","luculent","perspicuous"],"f":"medium"},{"w":"lure","p":"noun","d":"(also figurative) Something that tempts or attracts, especially one with a promise of reward or pleasure.","s":["entice","hook","bait","tempt","enticement","decoy"],"f":"medium"},{"w":"meager","p":"adjective","d":"Poor, deficient or inferior in amount, quality or extent","s":["paltry","miserable","marginal","meagre","spare","measly"],"f":"medium"},{"w":"mediate","p":"verb","d":"(transitive) To resolve differences, or to bring about a settlement, between conflicting parties.","s":["intermediate","liaise","intercede","indirect","arbitrate","middle"],"f":"medium"},{"w":"mimic","p":"verb","d":"(transitive) To imitate, especially in order to ridicule.","s":["mock","imitative","mimicker"],"f":"medium"},{"w":"mirth","p":"noun","d":"The emotion usually following humor and accompanied by laughter.","s":["glee","hilarity","gleefulness","mirthfulness"],"f":"medium"},{"w":"modest","p":"adjective","d":"Not bragging or boasting about oneself or one's achievements; unpretentious, humble.","s":["coy","demure","plain","restrained","moderate","mild"],"f":"medium"},{"w":"muster","p":"noun","d":"(military) An assembling or review of troops, as for parade, verification of numbers, inspection, exercise, or introduction into service.","s":["draft","rally","summon","conscription"],"f":"medium"},{"w":"naive","p":"adjective","d":"Lacking worldly experience, wisdom, or judgement; unsophisticated.","s":["naif","ingenuous","ignorant","artless","simple","immature"],"f":"medium"},{"w":"narrate","p":"verb","d":"(transitive) To relate (a story or series of events) in speech or writing.","s":["tell","recount","recite","spin"],"f":"medium"},{"w":"negate","p":"verb","d":"To deny the existence, evidence, or truth of; to contradict.","s":["contravene","belie","contradict"],"f":"medium"},{"w":"nimble","p":"adjective","d":"Quick and light in movement or action.","s":["intelligent","active","quick","agile","spry"],"f":"medium"},{"w":"notion","p":"noun","d":"Mental apprehension of whatever may be known, thought, or imagined; idea, concept.","s":["feeling","belief","impression","whim","whimsy","notions"],"f":"medium"},{"w":"novice","p":"noun","d":"A beginner; one who is not very familiar or experienced in a particular subject.","s":["initiate","tyro","beginner","beginning","tiro"],"f":"medium"},{"w":"nurture","p":"noun","d":"The act or process of encouraging the growth or development of something.","s":["sustain","raise","nourish","nurturing","rear","fostering"],"f":"medium"},{"w":"oblige","p":"verb","d":"(transitive, intransitive) To do (someone) a service or favour (hence, originally, creating an obligation).","s":["compel","hold","accommodate","bind","obligate"],"f":"medium"},{"w":"obscure","p":"adjective","d":"Difficult to understand; abstruse.","s":["dark","incomprehensible","indeterminate","mist","vague","obliterate"],"f":"medium"},{"w":"obstacle","p":"noun","d":"Something that impedes, stands in the way of, or holds up progress, either physically or figuratively","s":["obstruction"],"f":"medium"},{"w":"ominous","p":"adjective","d":"Specifically, giving indication of a coming ill; being an evil omen","x":"An ominous silence preceded the announcement.","s":["baleful","sinister","minatory","alarming","minacious","forbidding"],"f":"medium"},{"w":"ornate","p":"adjective","d":"Elaborately ornamented, often to excess.","s":["embellished","adorned","rhetorical","decorated","flowery","ornamented"],"f":"medium"},{"w":"oust","p":"verb","d":"(transitive) To expel; to remove.","s":["expel"],"f":"medium"},{"w":"outspoken","p":"adjective","d":"Speaking, or spoken, freely, openly, or boldly; vocal; frank.","s":["candid","forthright","blunt","direct","vocal","communicative"],"f":"medium"},{"w":"palpable","p":"adjective","d":"(figurative) Obvious or easily perceived; noticeable.","x":"The tension in the room was almost palpable.","s":["tangible","obvious","perceptible"],"f":"medium"},{"w":"parched","p":"adjective","d":"Very thirsty.","s":["scorched","dry","cooked","adust","sunbaked","baked"],"f":"medium"},{"w":"peculiar","p":"adjective","d":"Out of the ordinary; odd; strange; unusual.","s":["strange","unusual","curious","particular","queer","singular"],"f":"medium"},{"w":"peril","p":"noun","d":"A situation of serious and immediate danger.","s":["queer","expose","menace","jeopardize","jeopardy","danger"],"f":"medium"},{"w":"pertain","p":"verb","d":"(intransitive) To relate to, concern, or be relevant to.","s":["concern","touch","refer","relate","appertain"],"f":"medium"},{"w":"placid","p":"adjective","d":"calm and quiet; peaceful; tranquil","x":"The placid lake mirrored the mountains perfectly.","s":["tranquil","calm","easygoing","unruffled","quiet","equable"],"f":"medium"},{"w":"plod","p":"verb","d":"(intransitive) To walk or move slowly and heavily or laboriously (+ on, through, over).","s":["trudge","slog","pad","footslog"],"f":"medium"},{"w":"plausible","p":"adjective","d":"Seemingly or apparently valid, likely, or acceptable; conceivably true or likely.","x":"That is the most plausible explanation we have.","s":["glib","slick","pat","probable","credible","presumptive"],"f":"medium"},{"w":"ponder","p":"verb","d":"To consider (something) carefully and thoroughly.","s":["ruminate","contemplate","speculate","mull","reflect","meditate"],"f":"medium"},{"w":"pragmatic","p":"adjective","d":"Practical, concerned with making decisions and actions that are useful in practice, not just theory.","s":["practical","realistic","hard-nosed","pragmatical","hardheaded","matter-of-fact"],"f":"medium"},{"w":"precise","p":"adjective","d":"(loosely) Both exact and accurate.","s":["meticulous","dead","fine","right","nice","punctilious"],"f":"medium"},{"w":"premise","p":"noun","d":"A proposition antecedently supposed or proved; something previously stated or assumed as the basis of further argument; a condition; a supposition.","s":["introduce","premiss","assumption","preface"],"f":"medium"},{"w":"prudent","p":"adjective","d":"Practically wise, judicious, shrewd.","s":["sensible","judicious","provident","wise","discreet","circumspect"],"f":"medium"},{"w":"quaint","p":"adjective","d":"Pleasingly unusual; especially, having old-fashioned charm.","x":"A quaint little cottage stood beside the brook.","s":["strange","unusual","old-time","nonmodern"],"f":"medium"},{"w":"quell","p":"verb","d":"(transitive) To subdue, put down, or silence (someone or something); to force (someone) to submit.","s":["appease","squelch","stay"],"f":"medium"},{"w":"query","p":"noun","d":"A question, an inquiry (US), an enquiry (UK).","s":["inquiry","enquiry","question"],"f":"medium"},{"w":"quirk","p":"noun","d":"An idiosyncrasy; a slight glitch, a mannerism; something unusual about the manner or style of something or someone.","s":["oddity","crotchet","quirkiness","queerness"],"f":"medium"},{"w":"ransack","p":"verb","d":"(transitive) To search (a place, through things, etc.) thoroughly, especially when vigorous and leaving behind a state of disarray.","s":["foray","plunder","reave","comb","loot","strip"],"f":"medium"},{"w":"rebuke","p":"verb","d":"(of a person) To criticise harshly; to reprove.","x":"He received a sharp rebuke for arriving late again.","s":["reprimand","chide","berate","scold","check","remonstrate"],"f":"medium"},{"w":"recoil","p":"verb","d":"To pull back, especially in disgust, horror or astonishment.","s":["spring","cringe","rebound","shrink","flinch","bounce"],"f":"medium"},{"w":"relish","p":"noun","d":"(by extension) (countable, uncountable, originally US) A condiment or sauce added to food for a spicy or tangy flavour; specifically, one made with chopped, pickled fruit or vegetables.","s":["savor","tang","bask","savour","zest","enjoy"],"f":"medium"},{"w":"remorse","p":"noun","d":"A feeling of regret or sadness for doing wrong or sinning.","s":["compunction","self-reproach"],"f":"medium"},{"w":"repel","p":"verb","d":"(transitive) To drive back (an assailant, advancing force etc.).","s":["drive","revolt","snub","rebuff","repulse","disgust"],"f":"medium"},{"w":"replica","p":"noun","d":"An exact copy.","s":["reproduction"],"f":"medium"},{"w":"resilient","p":"adjective","d":"Returning quickly to normal after damaging events or conditions. (of systems, organisms or people)","x":"The resilient crew rebuilt the set overnight.","s":["spirited","live","elastic","bouncy","springy","whippy"],"f":"medium"},{"w":"retort","p":"noun","d":"A sharp or witty reply, or one which turns an argument against its originator; a comeback.","s":["riposte","return","rejoinder","rejoin","comeback","repay"],"f":"medium"},{"w":"revel","p":"verb","d":"To make merry; to have a happy, lively time.","s":["delight","wallow","racket","rejoice","enjoy","revelry"],"f":"medium"},{"w":"robust","p":"adjective","d":"Evincing strength and health; strong; (often, especially) both large and healthy.","s":["vigorous","stout","strong","rich","rugged","unrefined"],"f":"medium"},{"w":"ruse","p":"noun","d":"(countable, by extension) An action intended to deceive; a trick.","s":["artifice"],"f":"medium"},{"w":"savor","p":"verb","d":"Alternative spelling of savour. [(transitive) To detect (a flavour or taste, or food or drink); to taste; specifically, to enjoy or linger on (a flavour or taste, or food and drink); to relish.]","s":["relish","tang","bask","savour","enjoy","sapidity"],"f":"medium"},{"w":"scant","p":"adjective","d":"Not full, large, or plentiful; scarcely sufficient; scanty; meager.","s":["light","short","stint","skimp"],"f":"medium"},{"w":"scorn","p":"verb","d":"(transitive) To feel or display contempt or disdain for something or somebody; to despise.","s":["disdain","contempt","spurn","reject","despise","contemn"],"f":"medium"},{"w":"serene","p":"adjective","d":"Calm, peaceful, unruffled.","x":"Her face remained serene despite the chaos around her.","s":["tranquil","clear","calm","peaceful"],"f":"medium"},{"w":"shrewd","p":"adjective","d":"Showing clever resourcefulness in practical matters.","s":["sharp","astute","hard","conniving","smart","scheming"],"f":"medium"},{"w":"skeptic","p":"noun","d":"Someone who doubts beliefs, claims, plans, etc. that are accepted by others as true or appropriate, especially one who habitually does so.","x":"Every skeptic in the room demanded more evidence.","s":["doubter","sceptic"],"f":"medium"},{"w":"solace","p":"noun","d":"Comfort or consolation in a time of loneliness or distress.","x":"She found solace in music after the loss.","s":["consolation","comfort","console","soothe","solacement"],"f":"medium"},{"w":"somber","p":"adjective","d":"US standard spelling of sombre. [Dark; gloomy; shadowy, dimly lit.]","s":["sombre","drab","colorless","colourless","cheerless","uncheerful"],"f":"medium"},{"w":"spurn","p":"verb","d":"(ambitransitive) To reject disdainfully; contemn; scorn.","s":["disdain","scorn","reject","pooh-pooh"],"f":"medium"},{"w":"staunch","p":"adjective","d":"(figuratively) Staying true to one's aims or principles; firm, resolute, unswerving.","s":["steadfast","constant","stem","stanch","unswerving","halt"],"f":"medium"},{"w":"stern","p":"adjective","d":"Having a hardness and severity of nature or manner.","s":["austere","inexorable","grim","relentless","butt","ass"],"f":"medium"},{"w":"subtle","p":"adjective","d":"Senses relating to tangible things.","s":["insidious","delicate","pernicious","perceptive","elusive","harmful"],"f":"medium"},{"w":"supple","p":"adjective","d":"Pliant, flexible, easy to bend.","s":["lithe","svelte","slender","lissom","lissome","flexible"],"f":"medium"},{"w":"tactful","p":"adjective","d":"Possessing tact; able to deal with people in a sensitive manner.","s":["discerning","discreet","diplomatic","diplomatical"],"f":"medium"},{"w":"tedious","p":"adjective","d":"Boring, monotonous, time-consuming, wearisome, livelong.","s":["dull","irksome","verbose","prolix","wearisome","slow"],"f":"medium"},{"w":"thrive","p":"verb","d":"(intransitive) To increase in wealth or success; to prosper, be profitable.","x":"Wildflowers thrive in this undisturbed soil.","s":["flourish","expand","boom","prosper"],"f":"medium"},{"w":"tranquil","p":"adjective","d":"Calm; without motion or sound.","s":["calm","unruffled","quiet","peaceful","placid","serene"],"f":"medium"},{"w":"trivial","p":"adjective","d":"Ignorable; of little significance or value.","s":["superficial","banal","frivolous","ordinary","insignificant","petty"],"f":"medium"},{"w":"uncanny","p":"adjective","d":"Strange, and mysteriously unsettling (as if supernatural); weird.","x":"He bore an uncanny resemblance to his grandfather.","s":["weird","eldritch","supernatural","unco","unearthly","unnatural"],"f":"medium"},{"w":"uphold","p":"verb","d":"To keep erect; to support; to sustain; to keep from falling","s":["preserve","maintain","continue"],"f":"medium"},{"w":"vague","p":"adjective","d":"Not clearly expressed; stated in indefinite terms.","s":["obscure","indistinct","dim","indeterminate","faint","shadowy"],"f":"medium"},{"w":"valiant","p":"adjective","d":"Possessing or showing courage or determination; brave, heroic.","s":["brave","courageous","fearless","valorous"],"f":"medium"},{"w":"vanity","p":"noun","d":"Excessive pride in or admiration of one's own abilities, appearance, achievements, or possessions.","s":["conceit","self-love","emptiness"],"f":"medium"},{"w":"vivid","p":"adjective","d":"(of an image or color) Bright, intense, or colourful.","x":"I still have vivid memories of that summer.","s":["intense","clear","bright","brilliant","pure","saturated"],"f":"medium"},{"w":"wary","p":"adjective","d":"Cautious of danger; carefully watching and guarding against deception, trickery, and dangers; suspiciously prudent","x":"Be wary of deals that seem too good to be true.","s":["leery","distrustful","suspicious","shy","mistrustful","untrusting"],"f":"medium"},{"w":"whimsical","p":"adjective","d":"Given to whimsy.","x":"The garden had a whimsical, storybook charm.","s":["capricious","arbitrary","impulsive"],"f":"medium"},{"w":"wistful","p":"adjective","d":"Full of longing or yearning.","s":["pensive","yearning","sad"],"f":"medium"},{"w":"zeal","p":"noun","d":"The fervour or tireless devotion for a person, cause, or ideal and determination in its furtherance; diligent enthusiasm; powerful interest.","x":"She tackled the project with tireless zeal.","s":["ardor","ardour","elan"],"f":"medium"},{"w":"aberration","p":"noun","d":"The act of wandering; deviation from truth, moral rectitude; abnormal; divergence from the straight, correct, proper, normal, or from the natural state.","s":["distortion","deviance","aberrancy","aberrance"],"f":"hard"},{"w":"abstruse","p":"adjective","d":"Difficult to comprehend or understand; obscure.","s":["esoteric","recondite","deep"],"f":"hard"},{"w":"acumen","p":"noun","d":"Quickness of perception or discernment; penetration of mind; the faculty of nice discrimination; acuity of mind.","x":"Her business acumen turned a corner shop into an empire.","s":["insightfulness"],"f":"hard"},{"w":"adulation","p":"noun","d":"Flattery; fulsome praise.","s":["adoration","idolization","idolisation"],"f":"hard"},{"w":"alacrity","p":"noun","d":"Eagerness; liveliness; enthusiasm.","x":"He accepted the challenge with surprising alacrity.","s":["briskness"],"f":"hard"},{"w":"amalgamate","p":"verb","d":"(transitive or intransitive) To merge, to combine, to blend, to join.","s":["amalgamated","coalesced","consolidated","unify","fused","commix"],"f":"hard"},{"w":"anachronism","p":"noun","d":"A person or thing which seems to belong to a different time or period of time. [from 19th c.]","x":"A knight checking his phone is an obvious anachronism.","s":["mistiming","misdating"],"f":"hard"},{"w":"anathema","p":"noun","d":"(by extension) Something which is vehemently disliked by somebody.","f":"hard"},{"w":"antithesis","p":"noun","d":"A proposition that is the diametric opposite of some other proposition.","f":"hard"},{"w":"apocryphal","p":"adjective","d":"(by extension) Of doubtful authenticity, or lacking authority; not regarded as canonical.","s":["questionable"],"f":"hard"},{"w":"approbation","p":"noun","d":"The act of approving; an assenting to the propriety of a thing with some degree of pleasure or satisfaction; approval, sanction, commendation or official recognition.","f":"hard"},{"w":"arcane","p":"adjective","d":"Understood by only a few.","x":"The manual was filled with arcane symbols and codes.","s":["esoteric"],"f":"hard"},{"w":"arduous","p":"adjective","d":"Needing or using up much energy; testing powers of endurance.","s":["heavy","hard","difficult","grueling","effortful","gruelling"],"f":"hard"},{"w":"ascetic","p":"adjective","d":"Characterized by rigorous self-denial or self-discipline; austere; abstinent; involving a withholding of physical pleasure.","s":["austere","abstemious","ascetical","abstainer","spartan"],"f":"hard"},{"w":"assiduous","p":"adjective","d":"Hard-working, diligent or regular (in attendance or work); industrious.","x":"Assiduous practice made her fluent in four languages.","s":["diligent","sedulous"],"f":"hard"},{"w":"auspicious","p":"adjective","d":"Of good omen; indicating future success.","s":["bright","propitious","advantageous","prosperous","favorable","favourable"],"f":"hard"},{"w":"axiomatic","p":"adjective","d":"Self-evident or unquestionable. [from 18th c.]","s":["obvious","self-evident","aphoristic","axiomatical","postulational"],"f":"hard"},{"w":"bastion","p":"noun","d":"(figuratively) A person, group, or thing, that strongly defends some principle.","s":["citadel"],"f":"hard"},{"w":"beguile","p":"verb","d":"(transitive) To charm, delight or captivate.","s":["charm","entrance","bewitch","capture","captivate","enamor"],"f":"hard"},{"w":"beleaguer","p":"verb","d":"To vex, harass, or beset.","s":["circumvent","tease","badger","bug","harass","pester"],"f":"hard"},{"w":"bellicose","p":"adjective","d":"Warlike in nature; aggressive; hostile.","s":["contentious","aggressive","combative","battleful"],"f":"hard"},{"w":"bequeath","p":"verb","d":"To hand down; to transmit.","s":["leave","will"],"f":"hard"},{"w":"bereft","p":"adjective","d":"(of a person) Pained by the loss of someone.","s":["sorrowful","bereaved","lovelorn","mourning","grieving","grief-stricken"],"f":"hard"},{"w":"bifurcate","p":"verb","d":"(intransitive) To divide or fork into two channels or branches.","s":["divided","branched","forked","pronged","biramous","prongy"],"f":"hard"},{"w":"bombastic","p":"adjective","d":"(of a person, their language or writing) showy in speech and given to using flowery or elaborate terms; grandiloquent; pompous","s":["turgid","large","tumid","rhetorical","orotund","declamatory"],"f":"hard"},{"w":"bucolic","p":"adjective","d":"Rustic, pastoral, country-styled.","s":["pastoral","rustic","idyll","rural","provincial","peasant"],"f":"hard"},{"w":"burgeon","p":"verb","d":"(intransitive) To grow or expand.","f":"hard"},{"w":"byzantine","p":"adjective","d":"(history) Belonging to the civilization of the Eastern Roman Empire between 331, when its capital was moved to Constantinople, and 1453, when that capital was conquered by the Turks and ultimately renamed Istanbul.","s":["artful","intricate","convoluted","complex","tortuous","labyrinthine"],"f":"hard"},{"w":"cacophony","p":"noun","d":"A mix of discordant sounds; dissonance.","s":["clamor","blare","blaring","din"],"f":"hard"},{"w":"cajole","p":"verb","d":"(ambitransitive) To persuade someone to do something which they are reluctant to do, especially by flattery or promises; to coax.","s":["palaver","coax","inveigle","blarney","wheedle","sweet-talk"],"f":"hard"},{"w":"calumny","p":"noun","d":"(countable) A false accusation or charge brought to tarnish another's reputation or standing.","s":["slander","defamation","aspersion","obloquy","traducement"],"f":"hard"},{"w":"capricious","p":"adjective","d":"Impulsive and unpredictable; determined by chance, impulse, or whim.","s":["arbitrary","whimsical","impulsive","unpredictable","freakish"],"f":"hard"},{"w":"castigate","p":"verb","d":"(transitive, formal) To punish or reprimand someone severely.","s":["chastise","correct","chasten","objurgate","chastize"],"f":"hard"},{"w":"caustic","p":"adjective","d":"Capable of burning, corroding or destroying organic tissue.","s":["acerbic","virulent","acrid","vitriolic","venomous","unpleasant"],"f":"hard"},{"w":"censure","p":"noun","d":"The act of blaming, criticizing, or condemning as wrong; reprehension.","s":["reprimand","exclusion","animadversion","excommunication","criminate"],"f":"hard"},{"w":"chastise","p":"verb","d":"(transitive) To castigate; to scold or censure.","s":["castigate","correct","chasten","objurgate","chastize"],"f":"hard"},{"w":"chicanery","p":"noun","d":"(uncountable) Deception by the use of trickery, quibbling, or subterfuge.","s":["trickery","shenanigan","guile","wile"],"f":"hard"},{"w":"chimerical","p":"adjective","d":"Inherently fantastic; wildly fanciful.","s":["chimeric","unrealistic","chimeral"],"f":"hard"},{"w":"circumspect","p":"adjective","d":"Carefully aware of all circumstances; considerate of all that is pertinent.","s":["prudent","discreet"],"f":"hard"},{"w":"clandestine","p":"adjective","d":"Done or kept in secret, sometimes to conceal an illicit or improper purpose.","x":"They held clandestine meetings after midnight.","s":["surreptitious","secret","cloak-and-dagger","hugger-mugger","undercover","hush-hush"],"f":"hard"},{"w":"coalesce","p":"verb","d":"(of separate elements) To join into a single mass or whole.","s":["conflate","merge","fuse","commingle","meld","blend"],"f":"hard"},{"w":"cogent","p":"adjective","d":"Reasonable and convincing; based on evidence.","x":"She made a cogent argument for immediate reform.","s":["potent","powerful","weighty","influential","forceful","telling"],"f":"hard"},{"w":"commensurate","p":"adjective","d":"Of a proportionate or similar measurable standard.","s":["corresponding","coterminous","commensurable","proportionate","coextensive"],"f":"hard"},{"w":"conflagration","p":"noun","d":"A large fire extending to many objects, or over a large space; a general burning.","s":["inferno"],"f":"hard"},{"w":"connoisseur","p":"noun","d":"A specialist in a given field whose opinion is highly valued, especially in one of the fine arts or in matters of taste.","s":["cognoscenti"],"f":"hard"},{"w":"contentious","p":"adjective","d":"Marked by heated arguments or controversy.","s":["aggressive","bellicose","combative","argumentative","litigious","disputatious"],"f":"hard"},{"w":"contrite","p":"adjective","d":"Sincerely penitent or feeling regret or sorrow, especially for one’s own actions.","s":["penitent","rueful","sorry","repentant","remorseful","apologetic"],"f":"hard"},{"w":"conundrum","p":"noun","d":"A difficult question or riddle, especially one using a play on words in the answer.","x":"How to cut costs without layoffs remains a conundrum.","s":["brain-teaser","enigma","riddle"],"f":"hard"},{"w":"convoluted","p":"adjective","d":"(figuratively) Complex, complicated, or intricate.","s":["byzantine","intricate","complex","tortuous","labyrinthine","tangled"],"f":"hard"},{"w":"copious","p":"adjective","d":"Vast in quantity or number, profuse, abundant; taking place on a large scale.","s":["ample","abundant","extensive","rich","plenteous","plentiful"],"f":"hard"},{"w":"coruscate","p":"verb","d":"(intransitive) To give off light; to reflect in flashes; to sparkle.","s":["sparkle"],"f":"hard"},{"w":"coterie","p":"noun","d":"A circle of individuals who associate with one another for a common purpose.","s":["clique","camp","pack","ingroup"],"f":"hard"},{"w":"craven","p":"adjective","d":"Unwilling to fight; lacking even the rudiments of courage; extremely cowardly.","s":["fearful","recreant","poltroon","cowardly"],"f":"hard"},{"w":"credulous","p":"adjective","d":"Excessively ready to believe things; gullible.","s":["naive","naif","credible","unquestioning","overcredulous"],"f":"hard"},{"w":"cursory","p":"adjective","d":"Hasty or superficial.","s":["perfunctory","casual","careless","passing"],"f":"hard"},{"w":"debacle","p":"noun","d":"(figurative) An event or enterprise that ends suddenly and disastrously, often with humiliating consequences.","s":["fiasco","thrashing","whipping","slaughter","walloping","drubbing"],"f":"hard"},{"w":"debilitate","p":"verb","d":"(transitive) To make feeble; to weaken.","s":["drain","enfeeble"],"f":"hard"},{"w":"decorum","p":"noun","d":"(uncountable) Appropriate social behavior.","s":["decorousness"],"f":"hard"},{"w":"deference","p":"noun","d":"Great respect.","s":["compliance","respect","complaisance","compliancy","obligingness","respectfulness"],"f":"hard"},{"w":"deleterious","p":"adjective","d":"(formal) Harmful, often in a subtle or unexpected way.","s":["harmful","noxious","injurious","hurtful"],"f":"hard"},{"w":"delineate","p":"verb","d":"To describe or depict with words or gestures.","s":["trace","draw","line","outline","drawn","describe"],"f":"hard"},{"w":"demagogue","p":"noun","d":"(derogatory) A political orator or leader, especially in a democratic system, who gains favor by pandering to or exciting the passions and prejudices of the audience rather than by using rational argument.","s":["rabble-rouser","demagog"],"f":"hard"},{"w":"denizen","p":"noun","d":"An inhabitant of a place; one who dwells in a certain place.","s":["inhabitant","dweller"],"f":"hard"},{"w":"desiccate","p":"verb","d":"(transitive) To remove moisture from; to dry; (sometimes) to dry to an extreme degree.","s":["dull","arid","desiccated"],"f":"hard"},{"w":"desultory","p":"adjective","d":"Jumping, or passing, from one thing or subject to another, without order, planning, or rational connection; lacking logical sequence.","s":["purposeless"],"f":"hard"},{"w":"diaphanous","p":"adjective","d":"Transparent or translucent; allowing light to pass through; capable of being seen through.","s":["gossamer","vaporous","thin","transparent","gauzy","filmy"],"f":"hard"},{"w":"diatribe","p":"noun","d":"An abusive, bitter verbal or written attack, criticism or denunciation.","x":"He launched into a diatribe against modern art.","s":["fulmination"],"f":"hard"},{"w":"didactic","p":"adjective","d":"Instructive or intended to teach or demonstrate, especially with regard to morality.","s":["informative","instructive","didactical"],"f":"hard"},{"w":"diffident","p":"adjective","d":"Lacking self-confidence; timid; modest","s":["timid","reserved","unsure","shy","unconfident"],"f":"hard"},{"w":"dilatory","p":"adjective","d":"Intentionally delaying (someone or something), intended to cause delay, gain time, or adjourn decision.","s":["laggard","cautious","slow","fabian","dawdling","pokey"],"f":"hard"},{"w":"dilettante","p":"noun","d":"An amateur, someone who dabbles in a field out of casual interest rather than as a profession or serious interest.","s":["superficial","dilettanteish","dilettantish","dabbler"],"f":"hard"},{"w":"discomfit","p":"verb","d":"(transitive) To embarrass (someone) greatly; to confuse; to perplex; to disconcert.","s":["rout","upset","disconcert","discomfiture","discompose","untune"],"f":"hard"},{"w":"disparate","p":"adjective","d":"Composed of inherently different or distinct elements; incongruous.","s":["different","heterogeneous"],"f":"hard"},{"w":"dissemble","p":"verb","d":"(transitive) To disguise or conceal something.","s":["affect","sham","act","feign","cloak","mask"],"f":"hard"},{"w":"divulge","p":"verb","d":"(transitive) To make public or known; to communicate to the public; to tell (information, especially a secret) so that it may become generally known.","s":["impart","break","reveal","declare","expose","disclose"],"f":"hard"},{"w":"dogmatic","p":"adjective","d":"Asserting dogmas or beliefs in a superior or arrogant way; opinionated, dictatorial.","s":["narrow","narrow-minded","dogmatical"],"f":"hard"},{"w":"dolorous","p":"adjective","d":"Solemnly or ponderously sad.","s":["sorrowful","tearful","weeping","lachrymose","dolourous"],"f":"hard"},{"w":"draconian","p":"adjective","d":"Very severe, cruel, or harsh.","f":"hard"},{"w":"ebullient","p":"adjective","d":"Enthusiastic; high-spirited.","x":"The ebullient crowd cheered long after the encore.","s":["exuberant","spirited","high-spirited"],"f":"hard"},{"w":"eclectic","p":"adjective","d":"Selecting a mixture of what appears to be best of various doctrines, methods or styles.","s":["discriminating","eclecticist"],"f":"hard"},{"w":"efface","p":"verb","d":"(transitive) To erase (as anything impressed or inscribed upon a surface); to render illegible or indiscernible.","s":["obliterate","wipe","erase"],"f":"hard"},{"w":"effervescent","p":"adjective","d":"(of a liquid) Giving off bubbles; fizzy.","s":["scintillating","charged","sparkling","fizzing","bubbly","foamy"],"f":"hard"},{"w":"effulgent","p":"adjective","d":"(literary, also figuratively) Radiant, resplendent, shining.","s":["bright","radiant","beaming","refulgent","beamy"],"f":"hard"},{"w":"elegiac","p":"adjective","d":"Expressing sorrow or mourning.","s":["sorrowful"],"f":"hard"},{"w":"elucidate","p":"verb","d":"(figurative) To make (something) clear and understandable; to clarify, to illuminate, to shed light on.","s":["clear","illuminate","clarify","enlighten","crystallize"],"f":"hard"},{"w":"emollient","p":"noun","d":"Something which softens or lubricates the skin; moisturizer.","s":["soft","demulcent","cream","ointment","softening","salving"],"f":"hard"},{"w":"enervate","p":"verb","d":"(transitive) To reduce strength or energy; debilitate.","s":["unnerve","unsettle","faze"],"f":"hard"},{"w":"ennui","p":"noun","d":"A gripping listlessness or melancholia caused by boredom; depression.","s":["tedium","boredom"],"f":"hard"},{"w":"ephemeral","p":"adjective","d":"Lasting for a short period of time.","s":["transient","transitory","fugacious","impermanent","temporary","passing"],"f":"hard"},{"w":"equanimity","p":"noun","d":"The state of being calm, stable and composed, especially under stress.","s":["calm","composure","calmness"],"f":"hard"},{"w":"equivocate","p":"verb","d":"(intransitive) To speak using double meaning; to speak ambiguously, unclearly or doubtfully, with intent to deceive; to vacillate in one's answers, responding with equivoques.","s":["prevaricate","palter","tergiversate"],"f":"hard"},{"w":"erudite","p":"noun","d":"a learned or scholarly person","s":["scholarly","learned"],"f":"hard"},{"w":"eschew","p":"verb","d":"(transitive, formal) To avoid; to shun, to shy away from.","s":["shun"],"f":"hard"},{"w":"esoteric","p":"adjective","d":"Intended for or likely to be understood by only a small number of people with a specialized knowledge or interest, or an enlightened inner circle.","x":"He collects esoteric jazz records few have heard of.","s":["cryptic","recondite","mystical","deep","occult","abstruse"],"f":"hard"},{"w":"espouse","p":"verb","d":"(transitive, figurative, modern usage) To accept, support, or take on as one’s own (an idea or a cause).","s":["embrace","conjoin","adapt","adopt","follow","marry"],"f":"hard"},{"w":"eulogy","p":"noun","d":"An oration to honor a deceased person, usually at a funeral.","s":["paean","encomium","panegyric","pean"],"f":"hard"},{"w":"euphemism","p":"noun","d":"(uncountable) The use of a word or phrase to replace another one that is more offensive, blunt or vulgar.","f":"hard"},{"w":"evanescent","p":"adjective","d":"Disappearing, vanishing.","s":["impermanent","temporary"],"f":"hard"},{"w":"exacerbate","p":"verb","d":"(transitive) To make worse (a problem, bad situation, negative feeling, etc.).","s":["aggravate","exasperate","worsen"],"f":"hard"},{"w":"exculpate","p":"verb","d":"To clear of or to free from guilt; exonerate.","s":["clear","discharge","acquit","exonerate","assoil"],"f":"hard"},{"w":"exigent","p":"adjective","d":"Urgent; pressing; needing immediate action.","s":["imperative","exacting","insistent","demanding","clamant","instant"],"f":"hard"},{"w":"exonerate","p":"verb","d":"(transitive) To free (someone) from accusation or blame.","s":["clear","discharge","acquit","assoil","exculpate"],"f":"hard"},{"w":"extol","p":"verb","d":"(transitive) To praise; to make high.","s":["proclaim","exalt","glorify","laud"],"f":"hard"},{"w":"extricate","p":"verb","d":"(transitive) To free, disengage, loosen, or untangle.","s":["disentangle","untangle","disencumber"],"f":"hard"},{"w":"facetious","p":"adjective","d":"Treating serious issues with (often deliberately) inappropriate humour; flippant.","s":["tongue-in-cheek","humorous","bantering","humourous"],"f":"hard"},{"w":"fastidious","p":"adjective","d":"Excessively particular, demanding, or fussy about details, especially about tidiness and cleanliness.","s":["meticulous","dainty","exacting","nice","particular","prissy"],"f":"hard"},{"w":"fatuous","p":"adjective","d":"Obnoxiously stupid; vacantly silly; content in one's foolishness.","s":["vacuous","asinine","inane","foolish","mindless"],"f":"hard"},{"w":"fecund","p":"adjective","d":"(formal) Highly fertile; able to produce offspring.","s":["prolific","productive","fertile"],"f":"hard"},{"w":"foment","p":"verb","d":"(transitive) To incite or cause troublesome acts; to encourage; to instigate.","s":["agitate"],"f":"hard"},{"w":"forbearance","p":"noun","d":"Patient self-control; restraint and tolerance under provocation.","s":["longanimity","patience"],"f":"hard"},{"w":"fortuitous","p":"adjective","d":"Happening by a lucky chance; lucky or fortunate.","s":["fortunate","unintended","causeless","uncaused"],"f":"hard"},{"w":"fractious","p":"adjective","d":"Irritable; argumentative; quarrelsome.","s":["hard","difficult","petulant","tetchy","nettlesome","peevish"],"f":"hard"},{"w":"fulsome","p":"adjective","d":"Offensive to good taste, tactless, overzealous, excessive.","s":["unctuous","insincere","oleaginous","buttery","oily","smarmy"],"f":"hard"},{"w":"gainsay","p":"verb","d":"(transitive, formal) To say something in contradiction to.","s":["dispute","challenge"],"f":"hard"},{"w":"garrulous","p":"adjective","d":"Excessively or tiresomely talkative.","x":"My garrulous uncle talks through every movie.","s":["loquacious","voluble","chatty","talkative","gabby","talky"],"f":"hard"},{"w":"gauche","p":"adjective","d":"Awkward or lacking in social graces; bumbling; apt to make gaffes.","s":["graceless","unpolished","inelegant"],"f":"hard"},{"w":"germane","p":"adjective","d":"Related to a topic of discussion or consideration.","s":["related"],"f":"hard"},{"w":"grandiloquent","p":"adjective","d":"(of a person, their language or writing) Given to using language in a showy way by using an excessive number of difficult words to impress others; bombastic; turgid.","s":["portentous","pretentious","pompous","rhetorical","magniloquent","pontifical"],"f":"hard"},{"w":"gregarious","p":"adjective","d":"(of a person) Who enjoys being in crowds and socializing.","s":["social","caespitose","clustered","cespitose","tufted"],"f":"hard"},{"w":"halcyon","p":"adjective","d":"(figurative) Calm, undisturbed, peaceful, serene.","s":["prosperous","happy","peaceful","golden"],"f":"hard"},{"w":"harangue","p":"noun","d":"A tirade, harsh scolding or rant, whether spoken or written.","s":["rant","ranting"],"f":"hard"},{"w":"hegemony","p":"noun","d":"(formal) Domination, influence, or authority over another, especially by one political group over a society or by one nation over others.","f":"hard"},{"w":"hubris","p":"noun","d":"Excessive arrogance or pride, or presumption, originally (Greek mythology) toward the gods.","f":"hard"},{"w":"iconoclast","p":"noun","d":"(by extension) One who attacks cherished beliefs; a maverick.","f":"hard"},{"w":"idiosyncrasy","p":"noun","d":"A behavior or way of thinking that is characteristic of a person.","s":["foible","mannerism"],"f":"hard"},{"w":"ignominy","p":"noun","d":"Great dishonor, shame, or humiliation.","s":["disgrace","shame"],"f":"hard"},{"w":"imbroglio","p":"noun","d":"A complicated situation; an entanglement.","s":["embroilment"],"f":"hard"},{"w":"immutable","p":"adjective","d":"Unable to be changed without exception.","s":["changeless"],"f":"hard"},{"w":"impassive","p":"adjective","d":"Having, or revealing, no emotion.","s":["deadpan","unemotional","stolid","expressionless","poker-faced","uncommunicative"],"f":"hard"},{"w":"impecunious","p":"adjective","d":"Lacking money.","s":["penurious","poor","pinched","penniless"],"f":"hard"},{"w":"imperious","p":"adjective","d":"Domineering, arrogant, or overbearing.","s":["domineering","masterful"],"f":"hard"},{"w":"imperturbable","p":"adjective","d":"Not capable of being, or not easily, perturbed, excited, or upset; calm and collected, even under pressure.","s":["composed","unflappable"],"f":"hard"},{"w":"impervious","p":"adjective","d":"Unaffected or unable to be affected by something.","s":["resistant","imperviable","soundproof","mothproof","greaseproof","runproof"],"f":"hard"},{"w":"implacable","p":"adjective","d":"Not able to be placated or appeased.","s":["inexorable","grim","stern","relentless","unrelenting","unforgiving"],"f":"hard"},{"w":"impugn","p":"verb","d":"(transitive) To verbally assault, especially to argue against an opinion, motive, or action; to question the truth or validity of; cast doubt on.","f":"hard"},{"w":"inchoate","p":"adjective","d":"Recently started but not fully formed yet; just begun; only elementary or immature.","s":["incipient","early"],"f":"hard"},{"w":"incontrovertible","p":"adjective","d":"Not capable of being denied, challenged, or disputed; closed to questioning.","s":["positive","irrefutable","undeniable","incontestable","incontestible","demonstrable"],"f":"hard"},{"w":"incorrigible","p":"adjective","d":"Unmanageable; impervious to correction by punishment or pain.","s":["depraved","delinquent","uncontrollable","unmanageable","unregenerate","unreformable"],"f":"hard"},{"w":"indelible","p":"adjective","d":"(figurative) Incapable of being canceled, lost, or forgotten.","s":["unerasable","ineradicable"],"f":"hard"},{"w":"indigent","p":"adjective","d":"Poor; destitute; in need.","s":["destitute","impoverished","needy","poor","necessitous","poverty-stricken"],"f":"hard"},{"w":"indolent","p":"adjective","d":"Habitually lazy, procrastinating, or resistant to physical labor.","s":["otiose","slothful","faineant","inactive","lazy","work-shy"],"f":"hard"},{"w":"ineffable","p":"adjective","d":"Beyond expression in words; unspeakable.","x":"The summit view filled me with an ineffable joy.","s":["sacred","indefinable","untellable","unspeakable","indescribable","inexpressible"],"f":"hard"},{"w":"ingenue","p":"noun","d":"An innocent, unsophisticated, naïve, wholesome girl or young woman.","f":"hard"},{"w":"inimical","p":"adjective","d":"Unfriendly, hostile.","s":["hostile","unfriendly"],"f":"hard"},{"w":"inimitable","p":"adjective","d":"Beyond imitation, surpassing all others; matchless.","s":["irreproducible","unreproducible"],"f":"hard"},{"w":"inscrutable","p":"adjective","d":"Difficult or impossible to comprehend, fathom, or interpret.","s":["cryptic","incomprehensible","inexplicable","deep","mystifying","mysterious"],"f":"hard"},{"w":"insipid","p":"adjective","d":"Flat; lacking character or definition.","s":["innocuous","vapid","jejune","flat","tasteless","harmless"],"f":"hard"},{"w":"intransigent","p":"adjective","d":"Unwilling to compromise or moderate a position; unreasonable.","s":["inexorable","adamant","adamantine","inflexible"],"f":"hard"},{"w":"intrepid","p":"adjective","d":"Fearless; bold; brave.","s":["audacious","bold","brave","dauntless","fearless","unfearing"],"f":"hard"},{"w":"inure","p":"verb","d":"(transitive) To cause someone to become accustomed to something that requires prolonged or repeated tolerance of one or more unpleasantries.","s":["harden"],"f":"hard"},{"w":"invective","p":"noun","d":"A severe or violent censure or reproach.","s":["vitriol","vituperation"],"f":"hard"},{"w":"irascible","p":"adjective","d":"Easily provoked to outbursts of anger; irritable.","s":["short","choleric","angry","ill-natured","hotheaded","short-tempered"],"f":"hard"},{"w":"laconic","p":"adjective","d":"Using as few words as possible; pithy and concise.","x":"His laconic reply — 'Fine.' — said everything.","s":["terse","crisp","concise","curt"],"f":"hard"},{"w":"lampoon","p":"verb","d":"(transitive) To satirize or poke fun at.","s":["charade","pasquinade","travesty","parody","spoof","burlesque"],"f":"hard"},{"w":"languid","p":"adjective","d":"Of a person or animal, or their body functions: flagging from weakness, or inactive or weak, especially due to illness or tiredness; faint, listless.","s":["lethargic","lackadaisical","languorous","dreamy","unergetic"],"f":"hard"},{"w":"largesse","p":"noun","d":"(uncountable) The trait of being willing to donate money, resources, or time; generosity, liberality.","s":["magnanimity","munificence","largess","openhandedness"],"f":"hard"},{"w":"limpid","p":"adjective","d":"Clear, transparent or bright.","s":["pellucid","clear","luculent","perspicuous","transparent","crystalline"],"f":"hard"},{"w":"lionize","p":"verb","d":"(transitive) To treat (a person) as if they were important, or a celebrity.","s":["celebrate"],"f":"hard"},{"w":"loquacious","p":"adjective","d":"Talkative; chatty.","s":["garrulous","voluble","chatty","talkative","gabby","talky"],"f":"hard"},{"w":"lugubrious","p":"adjective","d":"Gloomy, mournful or dismal, especially to an exaggerated degree.","s":["sorrowful"],"f":"hard"},{"w":"magnanimous","p":"adjective","d":"Noble and generous in spirit.","s":["noble","large","big","generous","greathearted"],"f":"hard"},{"w":"malediction","p":"noun","d":"A curse.","s":["imprecation"],"f":"hard"},{"w":"mellifluous","p":"adjective","d":"(figurative) Sweet, smooth and musical; pleasant to hear (generally used of a person's voice, tone or writing style).","s":["dulcet","sweet","mellisonant","melodious","honeyed","melodic"],"f":"hard"},{"w":"mendacious","p":"adjective","d":"(of a person) Lying, untruthful or dishonest.","s":["false","lying","untruthful"],"f":"hard"},{"w":"mercurial","p":"adjective","d":"(comparable) Having a lively or volatile character; animated, changeable, quick-witted.","s":["erratic","quicksilver","changeable","changeful","fickle"],"f":"hard"},{"w":"mien","p":"noun","d":"(countable, uncountable) Demeanor; facial expression or attitude, especially one which is intended by its bearer.","s":["bearing","presence","comportment"],"f":"hard"},{"w":"misanthrope","p":"noun","d":"Someone who distrusts or avoids other people.","f":"hard"},{"w":"mollify","p":"verb","d":"To appease anger, pacify, gain the good will of.","s":["assuage","placate","conciliate","appease","gruntle","pacify"],"f":"hard"},{"w":"morose","p":"adjective","d":"Sullen, gloomy; showing a brooding ill humour.","s":["sullen","dour","dark","glum","glowering","sour"],"f":"hard"},{"w":"munificent","p":"adjective","d":"(of a person or group) Very liberal in giving or bestowing.","s":["lavish","prodigal","generous","unsparing","unstinting","unstinted"],"f":"hard"},{"w":"myopic","p":"adjective","d":"(figurative) Shortsighted; improvident.","s":["impaired","shortsighted","nearsighted","presbyopic","astigmatic","ametropic"],"f":"hard"},{"w":"nadir","p":"noun","d":"(figuratively) The lowest point; time of greatest depression.","f":"hard"},{"w":"nebulous","p":"adjective","d":"Vague or ill-defined.","s":["indistinct","cloudy","nebulose","unfixed","indefinite"],"f":"hard"},{"w":"nefarious","p":"adjective","d":"Sinful, villainous, criminal, or wicked, especially when noteworthy or notorious for such characteristics.","x":"The villain's nefarious plan was finally exposed.","s":["wicked","villainous"],"f":"hard"},{"w":"neophyte","p":"noun","d":"A beginner; a person who is new to a subject, skill, or belief.","s":["fledgling","entrant","starter","catechumen","freshman","fledgeling"],"f":"hard"},{"w":"noisome","p":"adjective","d":"(literary) Hurtful or noxious to health; unwholesome, insalubrious.","s":["vile","loathsome","fetid","foul","malodorous","putrid"],"f":"hard"},{"w":"nonpareil","p":"adjective","d":"(frequently postpositive) Unequalled, unrivalled; unique.","s":["apotheosis","paragon","unrivaled","one","unmatched","incomparable"],"f":"hard"},{"w":"obdurate","p":"adjective","d":"Stubbornly persistent, generally in wrongdoing; refusing to reform or repent.","s":["obstinate","heartless","stony","flinty","unrepentant","hardhearted"],"f":"hard"},{"w":"obfuscate","p":"verb","d":"To deliberately make more confusing in order to conceal the truth.","f":"hard"},{"w":"oblique","p":"adjective","d":"Not straightforward; indirect; by implication; (sometimes even) obscure, ambiguous, or confusing.","s":["collateral","devious","indirect","crabwise","catty-corner","catercorner"],"f":"hard"},{"w":"obsequious","p":"adjective","d":"Excessively eager and attentive to please or to obey instructions; fawning, subservient, servile.","s":["servile","insincere","fawning","sycophantic","bootlicking","toadyish"],"f":"hard"},{"w":"obtuse","p":"adjective","d":"Intellectually dull or dim-witted.","s":["dull","dim","dense","stupid","simple","purblind"],"f":"hard"},{"w":"obviate","p":"verb","d":"(transitive) To anticipate and prevent or bypass (something which would otherwise have been necessary or required); to render (something) unnecessary.","s":["deflect","avert","avoid","eliminate"],"f":"hard"},{"w":"odious","p":"adjective","d":"Arousing or meriting strong dislike, aversion, or intense displeasure.","s":["execrable","abominable","hateful","detestable"],"f":"hard"},{"w":"officious","p":"adjective","d":"Offensively intrusive or interfering in offering advice and services.","s":["intrusive","busy","meddlesome","interfering","meddling","busybodied"],"f":"hard"},{"w":"onerous","p":"adjective","d":"Imposing or constituting a physical, mental, or figurative load which can be borne only with effort; burdensome.","s":["heavy","burdensome","taxing"],"f":"hard"},{"w":"opprobrium","p":"noun","d":"(uncountable) Disgrace or bad reputation arising from exceedingly shameful behaviour; ignominy.","s":["infamy","obloquy"],"f":"hard"},{"w":"ossify","p":"verb","d":"(ambitransitive, animate) To become (or cause to become) inflexible and rigid in habits or opinions.","f":"hard"},{"w":"ostensible","p":"adjective","d":"Appearing as such; being such in appearance; professed, supposed (rather than demonstrably true or real).","s":["superficial","apparent","counterfeit","imitative","seeming","ostensive"],"f":"hard"},{"w":"ostentatious","p":"adjective","d":"Intended to attract notice.","s":["conspicuous","pretentious","kitsch","showy","tasteless","splashy"],"f":"hard"},{"w":"paean","p":"noun","d":"(by extension) Any loud and joyous song; a song of triumph.","s":["eulogy","encomium","panegyric","pean"],"f":"hard"},{"w":"panacea","p":"noun","d":"A solution to all problems.","s":["nostrum","cure-all"],"f":"hard"},{"w":"paragon","p":"noun","d":"A person of preeminent qualities, who acts as a pattern or model for others.","s":["apotheosis","nonpareil","idol","perfection","saint","nonesuch"],"f":"hard"},{"w":"pariah","p":"noun","d":"Synonym of outcast: A person despised and excluded by their family, community, or society, especially a member of the untouchable castes in Indian society.","s":["outcast","castaway"],"f":"hard"},{"w":"parsimony","p":"noun","d":"Great reluctance to spend money unnecessarily.","x":"His parsimony bordered on outright stinginess.","s":["niggardliness","closeness","parsimoniousness","tightness","niggardness","meanness"],"f":"hard"},{"w":"paucity","p":"noun","d":"A smallness in size or amount that is insufficient; meagerness, dearth.","s":["dearth"],"f":"hard"},{"w":"pedantic","p":"adjective","d":"Tending to show off one’s knowledge, often in a tiresome manner.","s":["academic","scholarly","donnish"],"f":"hard"},{"w":"pejorative","p":"noun","d":"A disparaging, belittling, or derogatory word or expression.","s":["dyslogistic","uncomplimentary","dislogistic"],"f":"hard"},{"w":"penchant","p":"noun","d":"Taste, liking, or inclination (for).","s":["predilection","preference","taste"],"f":"hard"},{"w":"perfidious","p":"adjective","d":"Of, pertaining to, or representing perfidy; disloyal to what should command one's fidelity or allegiance.","s":["treacherous","unfaithful","punic"],"f":"hard"},{"w":"perfunctory","p":"adjective","d":"Performed in a careless or indifferent manner as a thing of rote.","s":["cursory","casual","careless","formal","passing"],"f":"hard"},{"w":"pernicious","p":"adjective","d":"Causing much harm in a subtle way.","s":["insidious","subtle","harmful","noxious","baneful","pestilent"],"f":"hard"},{"w":"perspicacious","p":"adjective","d":"(figuratively) Of acute discernment; having keen insight; mentally perceptive.","s":["sagacious","discerning","sapient","wise","clear-sighted","clear-eyed"],"f":"hard"},{"w":"pertinacious","p":"adjective","d":"Stubbornly resolute or tenacious.","s":["dour","tenacious","unyielding","stubborn","dogged","bulldog"],"f":"hard"},{"w":"petulant","p":"adjective","d":"Childishly irritable.","s":["fractious","tetchy","nettlesome","peevish","cranky","irritable"],"f":"hard"},{"w":"phlegmatic","p":"adjective","d":"Not easily excited to action or passion; calm; sluggish.","s":["unemotional","phlegmatical"],"f":"hard"},{"w":"placate","p":"verb","d":"(transitive) To calm; to bring peace to; to influence someone who was furious to the point that they become content or at least no longer irate.","s":["assuage","conciliate","appease","mollify","gruntle","pacify"],"f":"hard"},{"w":"platitude","p":"noun","d":"(countable) An often-quoted saying that is supposed to be meaningful but has become unoriginal or hackneyed through overuse.","s":["banality","commonplace","bromide","cliche"],"f":"hard"},{"w":"plethora","p":"noun","d":"(usually followed by of) An excessive amount or number; an abundance.","x":"The night market offered a plethora of choices.","s":["nimiety","superfluity","embarrassment","overplus"],"f":"hard"},{"w":"polyglot","p":"adjective","d":"Of a person: speaking, or versed in, many languages; multilingual.","s":["linguist","multilingual"],"f":"hard"},{"w":"portent","p":"noun","d":"Something that portends an event about to occur, especially an unfortunate or evil event; an omen.","s":["presage","omen","prognostic"],"f":"hard"},{"w":"precocious","p":"adjective","d":"Characterized by exceptionally early development or maturity.","s":["advanced","early","gifted","talented"],"f":"hard"},{"w":"proclivity","p":"noun","d":"A predisposition or natural inclination, propensity, or a predilection; especially, a strong disposition or bent.","s":["propensity","leaning"],"f":"hard"},{"w":"prodigious","p":"adjective","d":"Extraordinarily amazing.","s":["significant","portentous","important","extraordinary","exceptional","colossal"],"f":"hard"},{"w":"profligate","p":"adjective","d":"Inclined to waste resources or behave extravagantly.","s":["libertine","extravagant","degenerate","riotous","immoral","prodigal"],"f":"hard"},{"w":"propensity","p":"noun","d":"An inclination, disposition, tendency, preference, or attraction.","s":["proclivity","tendency","leaning","aptness"],"f":"hard"},{"w":"propitious","p":"adjective","d":"Favorable; advantageous.","s":["gracious","auspicious","prosperous","favorable","favourable","encouraging"],"f":"hard"},{"w":"prosaic","p":"adjective","d":"(main usage, usually of writing or speaking but also figurative) Overly plain, simple or commonplace, to the point of being boring.","s":["humdrum","commonplace","uninteresting","prosy","matter-of-fact","unexciting"],"f":"hard"},{"w":"protean","p":"adjective","d":"Exceedingly variable; readily assuming different shapes or forms.","s":["variable"],"f":"hard"},{"w":"querulous","p":"adjective","d":"Often complaining; suggesting a complaint in expression; fretful, whining.","s":["fretful","whiny","whining","complaintive","whiney"],"f":"hard"},{"w":"quiescent","p":"adjective","d":"Inactive, quiet, at rest.","s":["quiet","inactive","dormant"],"f":"hard"},{"w":"quintessence","p":"noun","d":"A thing that is the most perfect example of its type; the most perfect embodiment of something; epitome, prototype.","s":["ether"],"f":"hard"},{"w":"quixotic","p":"adjective","d":"Resembling or characteristic of the Spanish chivalric hero Don Quixote; possessed with or resulting from the desire to do noble and romantic deeds, without thought of realism and practicality.","s":["impractical","wild-eyed","romantic"],"f":"hard"},{"w":"rancor","p":"noun","d":"(American spelling) A feeling of long-lasting ire for another, sometimes to the point of hatred, over a perceived wrongdoing; bitterness.","s":["resentment","gall","bitterness","rancour"],"f":"hard"},{"w":"rapacious","p":"adjective","d":"(also figurative) Voracious; avaricious.","s":["esurient","ravenous","voracious","aggressive","ravening","acquisitive"],"f":"hard"},{"w":"recalcitrant","p":"adjective","d":"Marked by a stubborn unwillingness to obey authority.","x":"The recalcitrant mule refused to move an inch.","s":["defiant","intractable","refractory"],"f":"hard"},{"w":"recluse","p":"noun","d":"A person who lives in self-imposed isolation or seclusion from the world, especially for religious purposes; a hermit.","s":["withdrawn","reclusive","troglodyte","hermit","unsocial"],"f":"hard"},{"w":"redolent","p":"adjective","d":"Fragrant or aromatic; having a sweet scent.","s":["evocative","aware","mindful","fragrant","aromatic","reminiscent"],"f":"hard"},{"w":"refractory","p":"adjective","d":"Obstinate and unruly; strongly opposed to something.","s":["fractious","stubborn","recalcitrant","intractable","disobedient","uncooperative"],"f":"hard"},{"w":"renegade","p":"noun","d":"An outlaw or rebel.","s":["apostate","recreant","rebel","turncoat","disloyal","deserter"],"f":"hard"},{"w":"repartee","p":"noun","d":"A swift, witty reply, especially one that is amusing.","f":"hard"},{"w":"reprehensible","p":"adjective","d":"Blameworthy, censurable, guilty.","s":["deplorable","wrong","criminal","condemnable"],"f":"hard"},{"w":"reprobate","p":"noun","d":"One rejected by God; a sinful person.","s":["depraved","perverse","perverted","miscreant","immoral","corrupt"],"f":"hard"},{"w":"repudiate","p":"verb","d":"(transitive) To reject the truth or validity of; to deny.","s":["renounce"],"f":"hard"},{"w":"rescind","p":"verb","d":"(transitive) To repeal, annul, or declare void; to take (something such as a rule or contract) out of effect.","s":["annul","lift","revoke","reverse","overturn","repeal"],"f":"hard"},{"w":"reticent","p":"adjective","d":"Unwilling to communicate; keeping one's thoughts and opinions to oneself; reserved or restrained.","s":["reserved","taciturn","restrained","unemotional","self-effacing","undemonstrative"],"f":"hard"},{"w":"sagacious","p":"adjective","d":"Having or showing keen discernment, sound judgment, and farsightedness; mentally shrewd.","x":"A sagacious judge saw straight through the lie.","s":["sapient","perspicacious","wise","politic"],"f":"hard"},{"w":"salient","p":"adjective","d":"Prominent; conspicuous.","s":["conspicuous","prominent","obvious","outstanding","striking","spectacular"],"f":"hard"},{"w":"sanguine","p":"adjective","d":"Anticipating the best; optimistic; confident; full of hope.","s":["ruddy","optimistic","rubicund","healthy"],"f":"hard"},{"w":"sardonic","p":"adjective","d":"Scornfully mocking or cynical.","s":["wry","sarcastic"],"f":"hard"},{"w":"satiate","p":"verb","d":"(transitive) To fill to satisfaction; to satisfy.","s":["gorge","replete","jaded","sated","glut","satiated"],"f":"hard"},{"w":"scathing","p":"adjective","d":"Harshly or bitterly critical; vitriolic.","s":["critical","vituperative"],"f":"hard"},{"w":"scintilla","p":"noun","d":"(figuratively) A small or trace amount.","s":["smidgen","shred","smidgeon","tittle","smidge","smidgin"],"f":"hard"},{"w":"sedulous","p":"adjective","d":"Of a person: diligent in application or pursuit; constant and persevering in business or in endeavours to effect a goal; steadily industrious.","s":["diligent","assiduous"],"f":"hard"},{"w":"servile","p":"adjective","d":"Excessively eager to please; obsequious.","s":["obsequious","subservient","submissive","slavish","slavelike"],"f":"hard"},{"w":"sinecure","p":"noun","d":"A position that requires little to no work, or easy work, but still gives an ample payment; a cushy job.","f":"hard"},{"w":"somnolent","p":"adjective","d":"Drowsy or sleepy.","s":["slumbrous","slumberous","slumbery"],"f":"hard"},{"w":"sophistry","p":"noun","d":"(uncountable) Plausible yet fallacious argumentations or reasoning.","s":["sophism"],"f":"hard"},{"w":"soporific","p":"adjective","d":"(pharmacology) Tending to induce sleep.","s":["uninteresting","narcotic","hypnotic","soporiferous","somniferous","somnific"],"f":"hard"},{"w":"specious","p":"adjective","d":"Seemingly well-reasoned, plausible or true, but actually fallacious.","s":["gilded","meretricious","spurious","insincere","invalid","false"],"f":"hard"},{"w":"spurious","p":"adjective","d":"False, not authentic, not genuine.","s":["specious","natural","counterfeit","misbegotten","invalid","misbegot"],"f":"hard"},{"w":"strident","p":"adjective","d":"Loud; shrill, piercing, high-pitched; rough-sounding.","s":["raucous","blatant","clamorous","clamant","cacophonous","cacophonic"],"f":"hard"},{"w":"stymie","p":"verb","d":"To thwart or stump; to cause to fail or to leave hopelessly puzzled, confused, or stuck.","s":["obstruct","block","stymy","blockade","embarrass","hinder"],"f":"hard"},{"w":"subjugate","p":"verb","d":"To forcibly impose obedience, servitude, or submission upon (a country, a people, etc.).","s":["subject","subdue","reduce","quash","repress"],"f":"hard"},{"w":"subservient","p":"adjective","d":"Obsequiously submissive.","s":["subordinate","submissive","servile","slavish"],"f":"hard"},{"w":"succinct","p":"adjective","d":"Brief and to the point.","s":["concise","compact","compendious","summary"],"f":"hard"},{"w":"superfluous","p":"adjective","d":"In excess of what is required or sufficient.","s":["otiose","redundant","excess","surplus","supererogatory","spare"],"f":"hard"},{"w":"supplant","p":"verb","d":"(transitive) To take the place of; to replace, to supersede.","s":["supersede","replace"],"f":"hard"},{"w":"surfeit","p":"noun","d":"(countable) An excessive amount of something.","s":["excess","glut","overabundance","repletion","oversupply","cloy"],"f":"hard"},{"w":"surreptitious","p":"adjective","d":"Stealthy, furtive, well hidden, covert (especially movements).","s":["clandestine","furtive","sneak","secret","skulking","concealed"],"f":"hard"},{"w":"sycophant","p":"noun","d":"One who uses obsequious compliments to gain self-serving favour or advantage from another; a servile flatterer.","s":["toady","crawler","lackey"],"f":"hard"},{"w":"taciturn","p":"adjective","d":"Silent; temperamentally untalkative; disinclined to speak.","x":"The taciturn farmer answered with a single nod.","s":["reticent","buttoned-up","untalkative"],"f":"hard"},{"w":"tangential","p":"adjective","d":"Only indirectly related.","s":["irrelevant","digressive"],"f":"hard"},{"w":"tantamount","p":"adjective","d":"Equivalent in meaning or effect; amounting to the same thing in practical terms, even if being technically distinct.","f":"hard"},{"w":"temerity","p":"noun","d":"(uncountable) Reckless boldness; foolish bravery.","s":["audacity","audaciousness"],"f":"hard"},{"w":"tenuous","p":"adjective","d":"Insubstantial.","s":["fine","weak","flimsy","thin","slight"],"f":"hard"},{"w":"tirade","p":"noun","d":"A long, angry or violent speech.","s":["broadside","philippic"],"f":"hard"},{"w":"torpid","p":"adjective","d":"lazy, lethargic or apathetic","s":["inert","sluggish","inactive","dormant","hibernating"],"f":"hard"},{"w":"tortuous","p":"adjective","d":"(often figurative) Twisted; having many turns; convoluted.","s":["byzantine","intricate","convoluted","complex","crooked","labyrinthine"],"f":"hard"},{"w":"tractable","p":"adjective","d":"(of people) Capable of being easily led, taught, or managed.","s":["docile","amenable","malleable","responsive","ductile","manageable"],"f":"hard"},{"w":"truculent","p":"adjective","d":"Eager or quick to argue, fight or start a conflict.","x":"The truculent customer demanded to see the manager.","s":["aggressive","hostile"],"f":"hard"},{"w":"turbid","p":"adjective","d":"Having the lees or sediment disturbed; not clear. (of a liquid)","s":["opaque","murky","cloudy","mirky","muddy"],"f":"hard"},{"w":"turgid","p":"adjective","d":"(of language or style) Overly complex and difficult to understand; grandiloquent; bombastic.","s":["large","tumid","rhetorical","bombastic","orotund","declamatory"],"f":"hard"},{"w":"ubiquitous","p":"adjective","d":"Being everywhere at once: omnipresent.","s":["present","omnipresent"],"f":"hard"},{"w":"umbrage","p":"noun","d":"A feeling of anger or annoyance caused by something offensive.","s":["offense"],"f":"hard"},{"w":"unctuous","p":"adjective","d":"Profusely polite, especially in an insincere and unpleasant manner.","s":["fulsome","insincere","oleaginous","buttery","oily","smarmy"],"f":"hard"},{"w":"unequivocal","p":"adjective","d":"Unambiguous; without equivocation or ambiguity; singularly clear, unmistakable, or unquestionable","s":["definitive","univocal","conclusive","straightforward","explicit","expressed"],"f":"hard"},{"w":"unimpeachable","p":"adjective","d":"Beyond doubt.","s":["innocent","acceptable","irreproachable","guiltless","unquestionable","blameless"],"f":"hard"},{"w":"urbane","p":"adjective","d":"Of a person (usually a man): having refined manners; courteous, polite, suave.","s":["gracious","refined","svelte","sophisticated","cosmopolitan","polished"],"f":"hard"},{"w":"usurp","p":"verb","d":"To seize power from another, usually by illegitimate means.","s":["arrogate","assume"],"f":"hard"},{"w":"vacillate","p":"verb","d":"(intransitive) To swing indecisively from one course of action or opinion to another.","x":"He vacillated between the two offers for weeks.","s":["hover","fluctuate","waver"],"f":"hard"},{"w":"vacuous","p":"adjective","d":"Showing a lack of thought or intelligence; vacant.","s":["hollow","asinine","inane","fatuous","foolish","empty"],"f":"hard"},{"w":"venerate","p":"verb","d":"(transitive) To treat with great respect and deference.","s":["reverence","fear","revere"],"f":"hard"},{"w":"veracity","p":"noun","d":"(uncountable, of a person) The quality of speaking or stating the truth; truthfulness.","f":"hard"},{"w":"verbose","p":"adjective","d":"Containing or using more words than necessary; long-winded, wordy. [from 17th c.]","s":["tedious","prolix","wordy","long-winded","windy"],"f":"hard"},{"w":"vestige","p":"noun","d":"(by extension) A faint mark or visible sign left by something which is lost, or has perished, or is no longer present.","s":["trace","shadow"],"f":"hard"},{"w":"vicarious","p":"adjective","d":"Experienced or gained by taking in another person’s experience rather than through first-hand experience, such as through watching or reading.","s":["secondary"],"f":"hard"},{"w":"vindictive","p":"adjective","d":"Having a tendency to seek revenge when wronged, vengeful.","s":["spiteful","malicious","unforgiving","despiteful","vengeful","revengeful"],"f":"hard"},{"w":"virulent","p":"adjective","d":"(medicine) Of a disease or disease-causing agent: malignant, able to cause damage to the host.","s":["acerbic","caustic","acrid","vitriolic","venomous","unpleasant"],"f":"hard"},{"w":"vitriolic","p":"adjective","d":"(figuratively) Bitterly scathing, caustic.","s":["acerbic","caustic","virulent","acrid","venomous","unpleasant"],"f":"hard"},{"w":"vociferous","p":"adjective","d":"Making or characterized by a noisy outcry; clamorous.","s":["blatant","clamorous","strident","clamant","noisy","clamourous"],"f":"hard"},{"w":"volition","p":"noun","d":"The mental power or ability of choosing; the will.","s":["willing","will"],"f":"hard"},{"w":"voracious","p":"adjective","d":"(of a person or their appetite) Wanting or devouring great quantities of food.","s":["esurient","rapacious","ravenous","ravening","acquisitive","edacious"],"f":"hard"},{"w":"welter","p":"noun","d":"A general confusion or muddle, especially of a large number of items.","s":["wallow","muddle","smother","jumble","clutter"],"f":"hard"},{"w":"winsome","p":"adjective","d":"Charming, engaging, winning; inspiring approval and trust, especially if in an innocent manner.","s":["attractive"],"f":"hard"},{"w":"zephyr","p":"noun","d":"Any light refreshing wind; a gentle breeze.","s":["air","breeze"],"f":"hard"}]</script>
+<script>
+/* Verbatim — single-file build. Word bank is embedded in #wordbank JSON. */
+"use strict";
+
+/* ------------------------------ data ------------------------------ */
+const BANK = JSON.parse(document.getElementById("wordbank").textContent);
+const MEDIUM = BANK.filter((w) => w.f !== "hard");
+const HARD = BANK.filter((w) => w.f === "hard");
+const DAILY_HARD = 5;
+const DAILY_TOTAL = 10;
+
+/* ------------------------------ prng ------------------------------ */
+function hashString(s) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function seededShuffle(arr, seed) {
+  const rng = mulberry32(hashString(seed));
+  const out = arr.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const t = out[i]; out[i] = out[j]; out[j] = t;
+  }
+  return out;
+}
+function randShuffle(arr) {
+  const out = arr.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = out[i]; out[i] = out[j]; out[j] = t;
+  }
+  return out;
+}
+function dailyWords(key) {
+  const m = seededShuffle(MEDIUM, key + ":medium").slice(0, DAILY_TOTAL - DAILY_HARD);
+  const h = seededShuffle(HARD, key + ":hard").slice(0, DAILY_HARD);
+  return seededShuffle(m.concat(h), key + ":order");
+}
+
+/* ------------------------------ dates ------------------------------ */
+function pad(n) { return String(n).padStart(2, "0"); }
+function dateKeyOf(d) { return d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()); }
+function todayKey() { return dateKeyOf(new Date()); }
+function dateFromKey(k) { const p = k.split("-").map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
+function addDays(d, n) { const c = new Date(d.getTime()); c.setUTCDate(c.getUTCDate() + n); return c; }
+function weekKeyOf(d) {
+  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const dayNum = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - dayNum + 3);
+  const firstThursday = date.getTime();
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const startDayNum = (yearStart.getUTCDay() + 6) % 7;
+  yearStart.setUTCDate(yearStart.getUTCDate() - startDayNum + 3);
+  const week = 1 + Math.round((firstThursday - yearStart.getTime()) / (7 * 864e5));
+  return date.getUTCFullYear() + "-W" + pad(week);
+}
+function currentWeekKey() { return weekKeyOf(new Date()); }
+function dateKeysOfWeek(wk) {
+  const y = Number(wk.split("-W")[0]); const w = Number(wk.split("-W")[1]);
+  const jan4 = new Date(Date.UTC(y, 0, 4));
+  const dayNum = (jan4.getUTCDay() + 6) % 7;
+  const week1Monday = addDays(jan4, -dayNum);
+  const monday = addDays(week1Monday, (w - 1) * 7);
+  const out = []; for (let i = 0; i < 7; i++) out.push(dateKeyOf(addDays(monday, i)));
+  return out;
+}
+function weekWords(wk) {
+  const seen = new Set(); const out = [];
+  for (const k of dateKeysOfWeek(wk)) {
+    for (const w of dailyWords(k)) { if (!seen.has(w.w)) { seen.add(w.w); out.push(w); } }
+  }
+  return out;
+}
+const fmtLong = { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" };
+const fmtShort = { month: "short", day: "numeric", timeZone: "UTC" };
+function prettyDate(k) { return dateFromKey(k).toLocaleDateString("en-US", fmtLong); }
+function prettyWeek(wk) {
+  const ks = dateKeysOfWeek(wk);
+  return dateFromKey(ks[0]).toLocaleDateString("en-US", fmtShort) + " – " + dateFromKey(ks[6]).toLocaleDateString("en-US", fmtShort);
+}
+
+/* ------------------------------ misc ------------------------------ */
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+const ICON = {
+  search: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>',
+  spin: '<svg class="spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg>',
+  volume: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
+  aR: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>',
+  aL: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>',
+  aUR: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>',
+  shuffle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></svg>',
+  check: '<svg class="mk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  x: '<svg class="mk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+};
+const $ = (sel, root) => (root || document).querySelector(sel);
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+/* ------------------------------ reveal ------------------------------ */
+const rvObserver = new IntersectionObserver((entries) => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); rvObserver.unobserve(e.target); }
+}, { rootMargin: "0px 0px -40px 0px" });
+function observeRv(root) {
+  (root || document).querySelectorAll(".rv:not(.in)").forEach((el) => rvObserver.observe(el));
+}
+
+/* ------------------------------ word card ------------------------------ */
+function cardHtml(w, i) {
+  const hard = w.f === "hard";
+  const idx = typeof i === "number" ? '<span class="idx' + (hard ? " h" : "") + '">' + pad(i + 1) + "</span>" : "";
+  const syn = (w.s && w.s.length)
+    ? '<ul class="syns">' + w.s.slice(0, 5).map((s) => "<li>" + esc(s) + "</li>").join("") + "</ul>" : "";
+  const audio = w.a ? '<button class="abtn" data-audio="' + esc(w.a) + '" aria-label="Hear pronunciation">' + ICON.volume + "</button>" : "";
+  return '<article class="card"><div class="crow">' + idx +
+    '<div class="cmain"><div class="chead"><h3>' + esc(w.w) + "</h3>" +
+    (w.p ? '<span class="pos">' + esc(w.p) + "</span>" : "") + "</div>" +
+    '<p class="def">' + esc(w.d) + "</p>" +
+    (w.x ? '<p class="ex">— “' + esc(w.x) + "”</p>" : "") + syn + "</div>" +
+    '<div class="cside">' + audio + '<span class="tag' + (hard ? " h" : "") + '">' + (hard ? "hard" : "daily") + "</span></div>" +
+    "</div></article>";
+}
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-audio]");
+  if (!btn) return;
+  const au = new Audio(btn.getAttribute("data-audio"));
+  au.play().catch(() => {});
+});
+
+/* ------------------------------ daily sections ------------------------------ */
+function dailySectionsHtml(key) {
+  const words = dailyWords(key);
+  const med = words.filter((w) => w.f !== "hard");
+  const hard = words.filter((w) => w.f === "hard");
+  const head = (idx, title, blurb, vio) =>
+    '<div class="shead"><div><p class="mono ' + (vio ? "vio" : "blaze") + '">' + idx + '</p><h2>' + title + "</h2></div><p>" + blurb + "</p></div>";
+  return '<div class="daymeta mono"><span>' + esc(prettyDate(key)) + " · Served 00:00 UTC</span><span>" + med.length + " daily + " + hard.length + " hard</span></div>" +
+    head("01 — Warm-up", "The Daily Five", "Approachable, useful, instantly deployable. Slip these into a sentence before lunch.", false) +
+    "<div>" + med.map((w, i) => '<div class="rv">' + cardHtml(w, i) + "</div>").join("") + "</div>" +
+    '<div class="gauntlet-box">' + head("02 — No mercy", "The Gauntlet", "Five words that fight back. Rare, razor-sharp, and worth every re-read.", true) +
+    '<div class="gauntlet">' + hard.map((w, i) => '<div class="rv">' + cardHtml(w, i) + "</div>").join("") + "</div></div>";
+}
+
+/* ------------------------------ views / tabs ------------------------------ */
+function showView(name) {
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("hidden", v.id !== "view-" + name));
+  document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.view === name));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (name === "quiz" && !quizState.built) buildAndIntro();
+}
+
+/* ------------------------------ hero / spotlight ------------------------------ */
+function initHero() {
+  const words = dailyWords(todayKey());
+  $("#hero-date").textContent = new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }) + " · UTC";
+  $("#stat-total").textContent = BANK.length + "+ words banked";
+  $("#stat-hard").textContent = HARD.length + " hard nuts to crack";
+
+  const spot = $("#spot-word"); const dotsWrap = $("#spot-dots");
+  let idx = 0; let timer = null;
+  function content(i) {
+    const c = words[i];
+    return '<h2 class="' + (c.f === "hard" ? "hard" : "") + '">' + esc(c.w) + "</h2>" +
+      '<p class="spot-pos">' + esc(c.p || "") + "</p>" +
+      '<p class="spot-def">' + esc(c.d) + "</p>";
+  }
+  function dots(i) {
+    const hard = words[i].f === "hard";
+    $("#spot-count").textContent = pad(i + 1) + " / " + pad(words.length);
+    $("#spot-hard").textContent = hard ? "hard nut" : "";
+    dotsWrap.querySelectorAll(".dot").forEach((d, di) => d.classList.toggle("on", di === i));
+  }
+  function go(i) {
+    spot.classList.add("fading");
+    setTimeout(() => { idx = i; spot.innerHTML = content(idx); dots(idx); spot.classList.remove("fading"); }, 320);
+  }
+  words.forEach((w, i) => {
+    const b = document.createElement("button");
+    b.className = "dot" + (i === 0 ? " on" : "");
+    b.setAttribute("aria-label", "Show " + w.w);
+    b.addEventListener("click", () => { resetTimer(); go(i); });
+    dotsWrap.appendChild(b);
+  });
+  function resetTimer() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => go((idx + 1) % words.length), 4200);
+  }
+  spot.innerHTML = content(0); dots(0); resetTimer();
+
+  $("#marquee-track").innerHTML = words.concat(words).map((w) => "<span>" + esc(w.w) + "<i></i></span>").join("");
+}
+
+/* ------------------------------ search ------------------------------ */
+function normWord(entry, q) {
+  return { w: entry.word || q, p: entry.partOfSpeech || null, d: entry.definition, x: entry.example || null, s: entry.synonyms || [], f: "medium", a: entry.audioUrl || null };
+}
+async function remoteLookup(q) {
+  try {
+    const r = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(q));
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data) && data.length) {
+        const e = data.find((x) => x.meanings && x.meanings.length) || data[0];
+        const m = (e.meanings || []).find((mm) => mm.definitions && mm.definitions[0]) || (e.meanings || [])[0];
+        if (m && m.definitions && m.definitions[0]) {
+          let audio = null;
+          for (const ph of e.phonetics || []) if (ph.audio && !audio) audio = ph.audio;
+          const syns = new Set();
+          (m.definitions[0].synonyms || []).forEach((s) => syns.add(s));
+          (m.synonyms || []).forEach((s) => syns.add(s));
+          return normWord({ word: e.word, partOfSpeech: m.partOfSpeech, definition: m.definitions[0].definition, example: m.definitions[0].example, synonyms: Array.from(syns).slice(0, 6), audioUrl: audio }, q);
+        }
+      }
+    }
+  } catch (err) { /* fall through */ }
+  try {
+    const r = await fetch("https://api.datamuse.com/words?sp=" + encodeURIComponent(q) + "&md=dp&max=1");
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data) && data.length && data[0].defs && data[0].defs[0]) {
+        const first = data[0].defs[0];
+        const tab = first.indexOf("\t");
+        const posMap = { n: "noun", v: "verb", adj: "adjective", adv: "adverb" };
+        const pos = posMap[first.slice(0, tab)] || null;
+        let synonyms = [];
+        try {
+          const rs = await fetch("https://api.datamuse.com/words?rel_syn=" + encodeURIComponent(q) + "&max=6");
+          if (rs.ok) {
+            const sd = await rs.json();
+            synonyms = sd.map((x) => x.word).filter((w) => !w.includes(" ")).slice(0, 5);
+          }
+        } catch (err) { /* ignore */ }
+        return normWord({ word: data[0].word, partOfSpeech: pos, definition: first.slice(tab + 1).trim(), synonyms }, q);
+      }
+    }
+  } catch (err) { /* offline */ }
+  return null;
+}
+function initSearch() {
+  const input = $("#search-input");
+  const out = $("#search-out");
+  const simWrap = $("#search-sim");
+  let timer = null; let seq = 0;
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    clearTimeout(timer);
+    if (q.length < 3) { out.innerHTML = ""; simWrap.innerHTML = ""; return; }
+    timer = setTimeout(async () => {
+      const my = ++seq;
+      $("#search-icon").innerHTML = ICON.spin;
+      const local = BANK.filter((w) => w.w.indexOf(q) !== -1).slice(0, 8);
+      const exact = local.find((w) => w.w === q);
+      let html = ""; let similar = local.filter((w) => w.w !== q);
+      if (exact) {
+        html = '<div class="search-result">' + cardHtml(exact, null) + "</div>";
+      } else {
+        const remote = await remoteLookup(q.split(/\s+/)[0]);
+        if (my !== seq) return;
+        if (remote) {
+          html = '<div class="search-result">' + cardHtml(remote, null) + "</div>";
+        } else {
+          html = '<p class="search-err">No definition found for “' + esc(q) + '”. Try another word.</p>';
+        }
+      }
+      if (my !== seq) return;
+      $("#search-icon").innerHTML = ICON.search;
+      out.innerHTML = html;
+      simWrap.innerHTML = similar.length
+        ? '<span class="mono mute">In the atelier:</span>' + similar.slice(0, 6).map((s) => '<button class="chip" data-goto="' + esc(s.w) + '">' + esc(s.w) + "</button>").join("")
+        : "";
+      simWrap.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => {
+        input.value = b.getAttribute("data-goto");
+        input.dispatchEvent(new Event("input"));
+      }));
+    }, 380);
+  });
+  $("#search-icon").innerHTML = ICON.search;
+}
+
+/* ------------------------------ flashcards ------------------------------ */
+const drill = { deck: [], i: 0, flipped: false };
+function renderDrill() {
+  const c = drill.deck[drill.i];
+  if (!c) return;
+  const hard = c.f === "hard";
+  $("#drill-meta").innerHTML = "Card " + pad(drill.i + 1) + " / " + pad(drill.deck.length) + (hard ? ' · <span class="vio">hard</span>' : "");
+  $("#drill-card").innerHTML =
+    '<div class="fcard' + (drill.flipped ? " flipped" : "") + '" id="fcard">' +
+    '<div class="face front' + (hard ? " hard" : "") + '">' +
+    '<p class="mono mute">' + esc(c.p || "word") + "</p>" +
+    '<p class="fword">' + esc(c.w) + "</p>" +
+    '<p class="fhint">Tap to reveal</p></div>' +
+    '<div class="face back"><p class="mono blaze">' + esc(c.w) + "</p>" +
+    '<p class="fdef">' + esc(c.d) + "</p>" +
+    (c.x ? '<p class="fex">“' + esc(c.x) + '”</p>' : "") + "</div></div>";
+  $("#fcard").addEventListener("click", () => { drill.flipped = !drill.flipped; $("#fcard").classList.toggle("flipped", drill.flipped); });
+  $("#drill-bar").style.width = ((drill.i + 1) / drill.deck.length) * 100 + "%";
+}
+function initDrill() {
+  drill.deck = dailyWords(todayKey());
+  $("#drill-prev").addEventListener("click", () => { drill.flipped = false; drill.i = (drill.i - 1 + drill.deck.length) % drill.deck.length; renderDrill(); });
+  $("#drill-next").addEventListener("click", () => { drill.flipped = false; drill.i = (drill.i + 1) % drill.deck.length; renderDrill(); });
+  $("#drill-shuffle").addEventListener("click", () => { drill.deck = randShuffle(drill.deck); drill.i = 0; drill.flipped = false; renderDrill(); });
+  renderDrill();
+}
+
+/* ------------------------------ archive ------------------------------ */
+const arch = { key: todayKey() };
+function renderArchive() {
+  $("#arch-list").innerHTML = '<div class="fadein">' + dailySectionsHtml(arch.key) + "</div>";
+  observeRv($("#arch-list"));
+  $("#arch-next").disabled = arch.key >= todayKey();
+  document.querySelectorAll("#arch-chips .chip").forEach((b) => b.classList.toggle("on", b.dataset.day === arch.key));
+}
+function initArchive() {
+  const today = todayKey();
+  const chips = [];
+  for (let i = 0; i < 7; i++) {
+    const k = dateKeyOf(addDays(dateFromKey(today), -i));
+    chips.push('<button class="chip' + (k === arch.key ? " on" : "") + '" data-day="' + k + '">' + (i === 0 ? "Today" : k.slice(5)) + "</button>");
+  }
+  $("#arch-chips").innerHTML = chips.join("");
+  $("#arch-chips").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-day]");
+    if (b) { arch.key = b.getAttribute("data-day"); renderArchive(); }
+  });
+  $("#arch-prev").innerHTML = ICON.aL + " Previous day";
+  $("#arch-next").innerHTML = "Next day " + ICON.aR;
+  $("#arch-prev").addEventListener("click", () => { arch.key = dateKeyOf(addDays(dateFromKey(arch.key), -1)); renderArchive(); });
+  $("#arch-next").addEventListener("click", () => {
+    if (arch.key < todayKey()) { arch.key = dateKeyOf(addDays(dateFromKey(arch.key), 1)); renderArchive(); }
+  });
+  renderArchive();
+}
+
+/* ------------------------------ quiz ------------------------------ */
+const KIND_CYCLE = ["definition", "word", "definition", "synonym", "word", "definition", "word", "synonym", "definition", "word"];
+const quizState = { built: false, payload: null, phase: "intro", qi: 0, chosen: null, answers: [] };
+
+function makeQuestion(kind, target, distractors) {
+  if (kind === "synonym") {
+    if (!target.s || !target.s.length) return null;
+    const answer = target.s[0];
+    const banned = new Set(target.s.map((s) => s.toLowerCase())); banned.add(target.w.toLowerCase());
+    const opts = distractors.map((d) => d.w).filter((w) => !banned.has(w.toLowerCase())).slice(0, 3);
+    if (opts.length < 3) return null;
+    return { kind, prompt: "Which word is closest in meaning to “" + target.w + "”?", options: randShuffle([answer].concat(opts)), answer, word: target.w, def: target.d };
+  }
+  if (kind === "word") {
+    const opts = distractors.map((d) => d.w).slice(0, 3);
+    if (opts.length < 3) return null;
+    return { kind, prompt: "Which word means “" + target.d + "”?", options: randShuffle([target.w].concat(opts)), answer: target.w, word: target.w, def: target.d };
+  }
+  const seen = new Set(); const opts = [];
+  for (const d of distractors) { if (!seen.has(d.d)) { seen.add(d.d); opts.push(d.d); } if (opts.length === 3) break; }
+  if (opts.length < 3) return null;
+  return { kind: "definition", prompt: "What does “" + target.w + "” mean?", options: randShuffle([target.d].concat(opts)), answer: target.d, word: target.w, def: target.d };
+}
+function buildQuiz() {
+  const pool = weekWords(currentWeekKey());
+  const targets = randShuffle(pool).slice(0, 10);
+  const poolIds = new Set(pool.map((w) => w.w));
+  const extras = randShuffle(BANK.filter((w) => !poolIds.has(w.w))).slice(0, 24);
+  let kindOffset = Math.floor(Math.random() * KIND_CYCLE.length);
+  const questions = [];
+  for (const t of targets) {
+    const cands = pool.concat(extras).filter((c) => c.w !== t.w);
+    const distractors = randShuffle(cands).filter((c, i, arr) => arr.findIndex((x) => x.w === c.w) === i).slice(0, 6);
+    let q = null;
+    for (let tr = 0; tr < KIND_CYCLE.length && !q; tr++) q = makeQuestion(KIND_CYCLE[(kindOffset + tr) % KIND_CYCLE.length], t, distractors);
+    kindOffset++;
+    if (q) questions.push(q);
+  }
+  return { weekKey: currentWeekKey(), questions, covered: pool.length };
+}
+function kindLabel(k) { return k === "synonym" ? "Synonym duel" : k === "word" ? "Reverse lookup" : "Meaning"; }
+function buildAndIntro() {
+  quizState.payload = buildQuiz();
+  quizState.phase = "intro"; quizState.qi = 0; quizState.chosen = null; quizState.answers = [];
+  quizState.built = true;
+  renderQuiz();
+  renderBestCta();
+}
+function attempts() {
+  try { return JSON.parse(localStorage.getItem("vb_attempts") || "[]"); } catch (e) { return []; }
+}
+function renderBestCta() {
+  const wk = currentWeekKey();
+  const mine = attempts().filter((a) => a.week === wk);
+  $("#cta-words").textContent = weekWords(wk).length;
+  $("#cta-week").textContent = wk;
+  $("#cta-range").textContent = prettyWeek(wk);
+  const el = $("#cta-best");
+  if (mine.length) {
+    const best = Math.max.apply(null, mine.map((m) => m.score));
+    el.innerHTML = '<p style="font-family:var(--fd);font-size:24px;font-weight:600">Best so far: ' + best + "/" + mine[0].total + '</p><p class="mono mute" style="margin-top:4px">' + mine.length + " attempt" + (mine.length === 1 ? "" : "s") + " this week</p>";
+  } else {
+    el.innerHTML = '<p style="font-family:var(--fd);font-style:italic;font-size:20px;color:var(--paper2)">Not attempted yet — the gauntlet awaits.</p>';
+  }
+}
+function renderQuiz() {
+  const root = $("#quiz-root");
+  const p = quizState.payload;
+  if (!p) return;
+
+  if (quizState.phase === "intro") {
+    root.innerHTML = '<div class="panel fadein">' +
+      '<p class="mono blaze">' + esc(p.weekKey) + " · " + esc(prettyWeek(p.weekKey)) + "</p>" +
+      "<h2>" + p.questions.length + " questions. No lifelines.</h2>" +
+      '<ul class="rules">' +
+      "<li>Drawn from every word served this week — all seven days.</li>" +
+      "<li>Meanings, reverse lookups, and the occasional synonym duel.</li>" +
+      "<li>Answer with the mouse or keys 1–4. Feedback is instant.</li>" +
+      "<li>Your best score for the week is saved on this device.</li>" +
+      "</ul>" +
+      '<button class="big-btn" id="q-start">Begin the reckoning ' + ICON.aUR + "</button></div>";
+    $("#q-start").addEventListener("click", () => { quizState.phase = "playing"; renderQuiz(); });
+    return;
+  }
+
+  if (quizState.phase === "done") {
+    const total = p.questions.length;
+    const score = quizState.answers.filter((a) => a.chosen === a.q.answer).length;
+    const misses = quizState.answers.filter((a) => a.chosen !== a.q.answer);
+    const all = attempts();
+    all.push({ week: p.weekKey, score, total, misses: misses.map((m) => m.q.word), at: Date.now() });
+    try { localStorage.setItem("vb_attempts", JSON.stringify(all)); } catch (e) { /* private mode */ }
+    const r = score / Math.max(total, 1);
+    const verdict = r === 1 ? "Flawless. A lexicographer walks among us." : r >= 0.8 ? "Formidable. Nearly immaculate." : r >= 0.6 ? "Solid — the hard ones almost bent." : r >= 0.4 ? "Respectable. The gauntlet drew blood." : "The words won this week. Rematch?";
+    const R = 62; const C = (2 * Math.PI * R).toFixed(1);
+    root.innerHTML = '<div class="panel result fadein">' +
+      '<p class="mono mute">' + esc(p.weekKey) + " · saved on this device</p>" +
+      '<div class="ring"><svg width="176" height="176" viewBox="0 0 160 160">' +
+      '<circle cx="80" cy="80" r="62" fill="none" stroke="rgba(242,237,227,.14)" stroke-width="6"/>' +
+      '<circle id="ring-fg" cx="80" cy="80" r="62" fill="none" stroke="#ff5c1f" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
+      '<div class="ring-num">' + score + "<small>/" + total + "</small></div></div>" +
+      '<p class="verdict">' + verdict + "</p>" +
+      '<div class="result-btns">' +
+      '<button class="big-btn" style="width:auto;margin:0" id="q-retake">New questions</button>' +
+      '<button class="ghost-btn" id="q-today">Back to today</button>' +
+      "</div>" +
+      (misses.length ? '<div class="misses"><p class="mono" style="color:var(--wrong)">Review — the ones that got away (' + misses.length + ")</p>" +
+        misses.map((m) => '<div class="miss"><h4>' + esc(m.q.word) + '</h4><span class="mk">' + kindLabel(m.q.kind) + "</span>" +
+          "<p>" + esc(m.q.def) + "</p>" +
+          '<div class="cmp"><span style="color:var(--wrong)">you: ' + esc(m.chosen.length > 80 ? m.chosen.slice(0, 80) + "…" : m.chosen) + "</span>" +
+          '<span style="color:var(--correct)">' + esc(m.q.answer.length > 80 ? m.q.answer.slice(0, 80) + "…" : m.q.answer) + "</span></div></div>").join("") + "</div>" : "") +
+      "</div>";
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const fg = $("#ring-fg");
+      if (fg) fg.style.strokeDashoffset = (C * (1 - r)).toFixed(1);
+    }));
+    $("#q-retake").addEventListener("click", () => { quizState.payload = buildQuiz(); quizState.qi = 0; quizState.answers = []; quizState.chosen = null; quizState.phase = "playing"; renderQuiz(); });
+    $("#q-today").addEventListener("click", () => showView("today"));
+    renderBestCta();
+    renderHistory();
+    toast("score saved · " + score + "/" + total);
+    return;
+  }
+
+  // playing
+  const q = p.questions[quizState.qi];
+  const progress = (quizState.qi + (quizState.chosen ? 1 : 0)) / p.questions.length;
+  root.innerHTML =
+    '<div class="qbar-row mono"><span>Question ' + (quizState.qi + 1) + " of " + p.questions.length + '</span><span class="blaze">' + kindLabel(q.kind) + "</span></div>" +
+    '<div class="qbar"><i id="qbar-fill" style="width:' + (progress * 100).toFixed(1) + '%"></i></div>' +
+    '<div class="fadein" key="q"><h2 class="qprompt">' + esc(q.prompt) + "</h2>" +
+    '<div class="opts">' + q.options.map((o, i) => {
+      let cls = "opt";
+      if (quizState.chosen !== null) {
+        if (o === q.answer) cls += " right";
+        else if (o === quizState.chosen) cls += " bad";
+        else cls += " dim";
+      }
+      const mark = quizState.chosen !== null && o === q.answer ? ICON.check : quizState.chosen === o && o !== q.answer ? ICON.x : "";
+      return '<button class="' + cls + '" data-opt="' + i + '"' + (quizState.chosen !== null ? " disabled" : "") + '>' +
+        '<span class="lt">' + "ABCD"[i] + "</span><span>" + esc(o) + "</span>" + mark + "</button>";
+    }).join("") + "</div>" +
+    '<p class="qtip mono">Tip: keys 1–4 answer too</p></div>';
+  root.querySelectorAll("[data-opt]").forEach((b) => b.addEventListener("click", () => pickOption(q.options[Number(b.getAttribute("data-opt"))])));
+}
+function pickOption(opt) {
+  if (quizState.chosen !== null || quizState.phase !== "playing") return;
+  quizState.chosen = opt;
+  const q = quizState.payload.questions[quizState.qi];
+  quizState.answers.push({ q, chosen: opt });
+  renderQuiz();
+  setTimeout(() => {
+    if (quizState.qi + 1 < quizState.payload.questions.length) {
+      quizState.qi++; quizState.chosen = null; quizState.phase = "playing";
+    } else {
+      quizState.phase = "done";
+    }
+    renderQuiz();
+  }, 1050);
+}
+document.addEventListener("keydown", (e) => {
+  if (quizState.phase !== "playing" || quizState.chosen !== null) return;
+  if ($("#view-quiz").classList.contains("hidden")) return;
+  const keys = ["1", "2", "3", "4", "a", "b", "c", "d"];
+  const idx = keys.indexOf(e.key.toLowerCase());
+  if (idx === -1) return;
+  const opt = quizState.payload.questions[quizState.qi].options[idx % 4];
+  if (opt) pickOption(opt);
+});
+function renderHistory() {
+  const all = attempts();
+  const el = $("#quiz-history");
+  if (!all.length) { el.innerHTML = ""; return; }
+  const byWeek = {};
+  all.forEach((a) => {
+    if (!byWeek[a.week]) byWeek[a.week] = { best: 0, total: a.total, n: 0 };
+    byWeek[a.week].n++;
+    byWeek[a.week].best = Math.max(byWeek[a.week].best, a.score);
+  });
+  const weeks = Object.keys(byWeek).sort().reverse().slice(0, 8);
+  el.innerHTML = '<div class="history"><p class="mono mute" style="margin-bottom:14px">Past reckonings</p>' +
+    weeks.map((wk) => '<div class="hrow"><div><p class="wk">' + esc(wk) + '</p><p class="rg">' + esc(prettyWeek(wk)) + "</p></div>" +
+      '<div><p class="sc">best ' + byWeek[wk].best + "/" + byWeek[wk].total + '</p><p class="at">' + byWeek[wk].n + " attempt" + (byWeek[wk].n === 1 ? "" : "s") + "</p></div></div>").join("") + "</div>";
+}
+
+/* ------------------------------ boot ------------------------------ */
+function boot() {
+  const tk = todayKey();
+  initHero();
+  initSearch();
+  $("#today-sections").innerHTML = dailySectionsHtml(tk);
+  initDrill();
+  initArchive();
+  renderBestCta();
+  renderHistory();
+
+  // static buttons
+  $("#cta-btn").innerHTML = "Take this week's test " + ICON.aUR;
+  $("#cta-btn").addEventListener("click", () => showView("quiz"));
+  $("#drill-shuffle").innerHTML = ICON.shuffle + " Shuffle";
+  $("#drill-prev").innerHTML = ICON.aL + " Prev";
+  $("#drill-next").innerHTML = "Next " + ICON.aR;
+
+  document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => showView(t.dataset.view)));
+  observeRv(document);
+}
+document.addEventListener("DOMContentLoaded", boot);
+
+</script>
+</body>
+</html>
